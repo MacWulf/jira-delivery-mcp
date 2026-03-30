@@ -12,8 +12,8 @@ Ez az utmutato azt mutatja meg, hogyan probald ki helyben a Jira skill csomagot 
   - `JIRA_API_TOKEN_DPAPI_FILE`
   - `JIRA_DEFAULT_PROJECT_KEY`
   - `JIRA_TEST_PROJECT_KEY`
-- A `TEST` projekt legyen a live probak celja
-- A `KAN` projekt maradjon a napi fejlesztes alap projektje
+- Legyen kulon validacios projekt a kontrollalt live probakhoz
+- A fo delivery projekt maradjon tiszta a validacios irasoktol
 
 ## Elerheto Skillek
 
@@ -49,8 +49,8 @@ A reszletes specifikacio itt van: [jira-issue-skill-metadata.md](./jira-issue-sk
 2. Probald ki a bootstrap skillt dry-run modban.
 3. Probald ki az intake skillt egy valos briefen.
 4. Probald ki az execution skillt egy nyitott ticketen.
-5. Csak ezutan menj live modba a `TEST` projektben.
-6. A `KAN` projektet csak akkor hasznald live irashoz, ha mar stabil a flow.
+5. Csak ezutan menj live modba a dedikalt validacios projektben.
+6. A fo delivery projektet csak akkor hasznald live irashoz, ha mar stabil a flow.
 
 ## Prompt Mintak
 
@@ -87,7 +87,7 @@ Hasznald a $jira-core es $jira-project-bootstrap skilleket. Egy uj projektet aka
 ### 6. Jovahagyott tervbol Jira issue lista
 
 ```text
-Hasznald a $jira-core, $jira-project-bootstrap es $jira-intake-refinement skilleket. A brief alapjan mar van egy jovahagyott bootstrap tervunk. Alakitsd at konkret Jira issue listava: 1 epic, starter story-k, day-one taskok, explicit dependency-k, es jelold meg, melyik legyen az elso aktiv ticket a TEST projektben.
+Hasznald a $jira-core, $jira-project-bootstrap es $jira-intake-refinement skilleket. A brief alapjan mar van egy jovahagyott bootstrap tervunk. Alakitsd at konkret Jira issue listava: 1 epic, starter story-k, day-one taskok, explicit dependency-k, es jelold meg, melyik legyen az elso aktiv ticket a validacios projektben.
 ```
 
 ### 7. Skill metadata-vel jelolt ticket olvasasa
@@ -100,7 +100,7 @@ Hasznald a $jira-core es $jira-execution-loop skilleket. Olvasd be a Jira issue 
 
 - Kezdd `dry-run` modban.
 - Eloszor csak olvassatok, ne irjatok.
-- Live irashoz csak a `TEST` projektet hasznald.
+- Live irashoz csak a dedikalt validacios projektet hasznald.
 - Ha a workflow vagy a statuszok nem egyertelmuek, eloszor olvasd ki a Jira valos transition listajat.
 - A `Done` statuszt csak akkor hasznald, ha a work tenyleg kesz.
 
@@ -114,10 +114,10 @@ Hasznald a $jira-core es $jira-execution-loop skilleket. Olvasd be a Jira issue 
 
 ## Atlepes Live Irashoz
 
-Ha a dry-run backlog jonak tunik, a kovetkezo helyi prompttal lehet tovabblepni a tenyleges Jira iras fele a `TEST` projektben:
+Ha a dry-run backlog jonak tunik, a kovetkezo helyi prompttal lehet tovabblepni a tenyleges Jira iras fele a dedikalt validacios projektben:
 
 ```text
-Hasznald a $jira-core, $jira-project-bootstrap es $jira-intake-refinement skilleket. A C:\\Codex\\Jira_integration\\fixtures\\sample-project-brief.md brief alapjan keszits konkret Jira issue listat, majd hozz letre csak a minimalis indulou backlogot a TEST projektben. Eloszor ellenorizd a duplikaciokat es a valid issue type-okat, utana dolgozz. Ha valami nem egyertelmu, allj meg az iras elott.
+Hasznald a $jira-core, $jira-project-bootstrap es $jira-intake-refinement skilleket. A C:\\Codex\\Jira_integration\\fixtures\\sample-project-brief.md brief alapjan keszits konkret Jira issue listat, majd hozz letre csak a minimalis indulou backlogot a dedikalt validacios projektben. Eloszor ellenorizd a duplikaciokat es a valid issue type-okat, utana dolgozz. Ha valami nem egyertelmu, allj meg az iras elott.
 ```
 
 ## Gyors Metadata Teszt
@@ -126,4 +126,4 @@ Ha kifejezetten azt akarod ellenorizni, hogy a Jira issue descriptionben tarolt 
 
 `npm run skill-metadata-live-test`
 
-Ez a `TEST` projektben letrehoz egy dedikalt teszt issue-t, beirja a skill metadata blokkot, visszaolvassa, majd riportot keszit az `artifacts` mappaba.
+Ez a dedikalt validacios projektben letrehoz egy kontrollalt issue-t, beirja a skill metadata blokkot, visszaolvassa, majd riportot keszit az `artifacts` mappaba.

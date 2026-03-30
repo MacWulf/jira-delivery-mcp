@@ -51,14 +51,13 @@ Important documents:
 - [Architecture](./docs/architecture.md)
 - [Assistant operating model](./docs/assistant-operating-model.md)
 - [Capability map](./docs/capability-map.md)
-- [Product backlog](./docs/product-backlog.md)
 - [Workflow policy](./docs/workflow-policy.md)
 - [Dependency control](./docs/dependency-control.md)
 - [Tool contracts](./docs/tool-contracts.md)
 
 ## Skills Included
 
-The local skill package under `C:\Users\User\.codex\skills` currently contains:
+The workspace is designed to operate with a focused Jira skill package:
 
 - `jira-core`
 - `jira-project-bootstrap`
@@ -72,7 +71,7 @@ These skills are intentionally tenant-aware:
 - they should adapt to team-managed vs company-managed constraints
 - if a requested action is not safely possible through the available AI tools or public APIs, they should tell the user which manual Jira step is required
 
-## Current Workflow Direction
+## Workflow Direction
 
 This project no longer treats workflow as a hardcoded assumption inside the skill layer.
 
@@ -83,11 +82,11 @@ The implemented operating direction is:
 3. validate workflow changes before publishing
 4. use the actual Jira transitions during day-to-day execution
 
-For the current `KAN` development project, a controlled live rollout was applied for a stronger delivery lifecycle:
+A validated delivery lifecycle supported by the current implementation is:
 
 `To Do -> Selected -> In Progress -> Blocked -> In Review -> QA -> Done`
 
-That rollout is treated as project reality, not as a universal rule for every future Jira project.
+That shape is treated as one supported operating model, not as a universal rule for every future Jira project.
 
 ## Safety Model
 
@@ -122,44 +121,20 @@ This workspace is built around explicit guardrails:
    npm run dev
    ```
 
-## Useful Commands
+## Common Commands
 
 ```powershell
 npm run check
 npm run build
 npm run smoke
-npm run live-test
-npm run skill-metadata-live-test
-npm run skill-metadata-demo-live-test
-npm run capability-roadmap-live-seed
-npm run dependency-control-live-test
-npm run workflow-admin-live-apply
+npm run dev
 ```
 
-## Recommended Tenant Setup
-
-This workspace currently assumes a practical separation between:
-
-- `KAN` as the main development project
-- `TEST` as the controlled live validation project
-
-That separation helps keep exploratory and validation traffic out of the main delivery backlog.
+Additional validation and operator scripts exist in the workspace, but they are intentionally kept out of the primary quick-start path.
 
 ## Secret Storage on Windows
 
 If you are running locally on Windows, the recommended approach is DPAPI-backed storage instead of putting the Jira API token directly in `.env`.
-
-Store the token with:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\store-dpapi-secret.ps1 -Path "$env:APPDATA\Codex\secrets\jira-api-token.dpapi" -FromClipboard
-```
-
-Then point `.env` to:
-
-```text
-JIRA_API_TOKEN_DPAPI_FILE=%APPDATA%\Codex\secrets\jira-api-token.dpapi
-```
 
 See [Secret storage](./docs/secret-storage.md) for details.
 
@@ -174,14 +149,8 @@ High-value next areas include:
 - issue type enablement strategy across team-managed and company-managed projects
 - publishing and packaging the MCP server more cleanly for repeated use
 
-## Naming
+## Repository
 
-Working repository name:
-
-- `jira-delivery-mcp`
-
-If a slightly more product-like name is preferred later, good alternatives would be:
+Recommended repository name:
 
 - `jira-delivery-mcp`
-- `codex-jira-operator`
-- `jira-project-ops`

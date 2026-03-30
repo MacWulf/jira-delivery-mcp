@@ -20,10 +20,7 @@ Az asszisztens ne csak issue-kat kezeljen, hanem kepes legyen uj Jira projektet 
 - erosebb admin kontroll
 - jobb valasztas, ha tobb projekt kozott egyseges governance kell
 
-## Jelenlegi tenant megfigyeles
-
-- A `KAN` projekt team-managed / simplified projektnek latszik, es ez marad a fejlesztoi projekt.
-- A `TEST` projekt team-managed kanban software projektkent lett bootstrapolva a kontrollalt teszteleshez.
+## Tenant-aware kovetkezmeny
 
 Gyakorlati kovetkezmeny:
 

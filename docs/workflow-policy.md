@@ -1,8 +1,8 @@
 # Workflow Policy
 
-## Celfolyamat a `KAN` projekthez
+## Cel workflow
 
-A szakmailag ajanlott es a projektben bevezetendo standard delivery workflow:
+A szakmailag ajanlott standard delivery workflow:
 
 - `To Do`
 - `Selected`

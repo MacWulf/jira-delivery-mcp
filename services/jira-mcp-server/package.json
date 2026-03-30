@@ -15,7 +15,7 @@
     "capability-roadmap-live-seed": "tsx src/capability-roadmap-live-seed.ts --confirm-live",
     "dependency-control-live-test": "tsx src/dependency-control-live-test.ts",
     "dependency-drift-live-test": "tsx src/dependency-drift-live-test.ts",
-    "workflow-admin-live-apply": "tsx src/workflow-admin-live-apply.ts KAN --confirm-live"
+    "workflow-admin-live-apply": "tsx src/workflow-admin-live-apply.ts --confirm-live"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.28.0",

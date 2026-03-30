@@ -50,4 +50,4 @@ JIRA_API_TOKEN_DPAPI_FILE=%APPDATA%\Codex\secrets\jira-api-token.dpapi
 
 ## Uzemi megjegyzes
 
-Mivel a jelenlegi Jira token korabban plain textben megjelent, azt erdemes rotalni, es az uj tokent mar kozvetlenul DPAPI fajlba menteni.
+- Ha egy token valaha nem vedett modon volt tarolva vagy megosztva, erdemes rotalni, es az uj tokent mar kozvetlenul DPAPI fajlba menteni.

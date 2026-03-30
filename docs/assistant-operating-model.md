@@ -8,9 +8,9 @@
 
 ## Environment separation
 
-- A napi fejlesztoi munka alap projektje `KAN`.
-- A kontrollalt live tesztek es irasi probak celprojektje `TEST`.
-- A technikai tesztek ne szemeteljek tele a fejlesztoi projektet, ha van dedikalt tesztprojekt.
+- A napi delivery munka menjen a fo projektben.
+- A kontrollalt validacios es irasi probak kulon sandbox vagy validacios projektben menjenek.
+- A technikai probak ne szemeteljek tele a fo delivery projektet, ha van dedikalt validacios projekt.
 
 ## Core loop
 
@@ -58,7 +58,7 @@
 - Az iro muveletek alapbol `dry-run` modban futnak.
 - Live modban `confirm=true` kell az irashoz.
 - A tenant-specifikus workflow-kat nem szabad beegetett feltetelezesekkel kezelni.
-- A live smoke es end-to-end tesztek a `JIRA_TEST_PROJECT_KEY` projektet hasznaljak, ha be van allitva.
+- A kontrollalt validacios futasok kulon sandbox projektet hasznaljanak, ha ilyen rendelkezésre all.
 
 ## Practical tool sequence
 
