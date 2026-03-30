@@ -1,6 +1,6 @@
-# Jira MCP and Skills
+# Jira Delivery MCP
 
-`Jira MCP and Skills` is a Codex-oriented Jira automation workspace that combines:
+`Jira Delivery MCP` is a Codex-oriented Jira automation workspace that combines:
 
 - a local MCP server for deterministic Jira and Confluence operations
 - a skill package for project bootstrap, refinement, execution, and workflow administration
@@ -178,7 +178,7 @@ High-value next areas include:
 
 Working repository name:
 
-- `jira-mcp-and-skills`
+- `jira-delivery-mcp`
 
 If a slightly more product-like name is preferred later, good alternatives would be:
 
