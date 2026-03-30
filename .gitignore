@@ -1,0 +1,8 @@
+node_modules/
+dist/
+**/dist/
+artifacts/
+**/artifacts/
+.env
+.DS_Store
+npm-debug.log*

@@ -1,0 +1,30 @@
+{
+  "name": "@jira-integration/jira-mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "smoke": "tsx src/smoke.ts",
+    "live-test": "tsx src/live-test.ts --confirm-live",
+    "skill-metadata-live-test": "tsx src/skill-metadata-live-test.ts --confirm-live",
+    "skill-metadata-demo-live-test": "tsx src/skill-metadata-demo-live-test.ts --confirm-live",
+    "capability-roadmap-live-seed": "tsx src/capability-roadmap-live-seed.ts --confirm-live",
+    "dependency-control-live-test": "tsx src/dependency-control-live-test.ts",
+    "dependency-drift-live-test": "tsx src/dependency-drift-live-test.ts",
+    "workflow-admin-live-apply": "tsx src/workflow-admin-live-apply.ts KAN --confirm-live"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.28.0",
+    "dotenv": "17.3.1",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "25.5.0",
+    "tsx": "4.21.0",
+    "typescript": "6.0.2"
+  }
+}

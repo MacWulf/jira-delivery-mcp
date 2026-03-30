@@ -1,0 +1,22 @@
+{
+  "name": "jira-integration",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "services/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace @jira-integration/jira-mcp-server",
+    "check": "npm run check --workspace @jira-integration/jira-mcp-server",
+    "dev": "npm run dev --workspace @jira-integration/jira-mcp-server",
+    "smoke": "npm run smoke --workspace @jira-integration/jira-mcp-server",
+    "live-test": "npm run live-test --workspace @jira-integration/jira-mcp-server",
+    "skill-metadata-live-test": "npm run skill-metadata-live-test --workspace @jira-integration/jira-mcp-server",
+    "skill-metadata-demo-live-test": "npm run skill-metadata-demo-live-test --workspace @jira-integration/jira-mcp-server",
+    "capability-roadmap-live-seed": "npm run capability-roadmap-live-seed --workspace @jira-integration/jira-mcp-server",
+    "workflow-admin-live-apply": "npm run workflow-admin-live-apply --workspace @jira-integration/jira-mcp-server"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}
