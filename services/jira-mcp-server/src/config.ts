@@ -9,7 +9,6 @@ const envSchema = z.object({
   JIRA_API_TOKEN_DPAPI_FILE: z.string().min(1).optional(),
   JIRA_DEFAULT_PROJECT_KEY: z.string().min(1).optional(),
   JIRA_VALIDATION_PROJECT_KEY: z.string().min(1).optional(),
-  JIRA_TEST_PROJECT_KEY: z.string().min(1).optional(),
   JIRA_DEFAULT_PICK_NEXT_JQL: z.string().min(1).optional(),
   JIRA_EXECUTION_MODE: z.enum(["dry-run", "live"]).default("dry-run"),
   JIRA_REQUIRE_CONFIRMATION: z.stringbool().default(true),
@@ -105,11 +104,8 @@ export function loadConfig(): AppConfig {
     config.defaultProjectKey = env.JIRA_DEFAULT_PROJECT_KEY;
   }
 
-  const validationProjectKey =
-    env.JIRA_VALIDATION_PROJECT_KEY ?? env.JIRA_TEST_PROJECT_KEY;
-
-  if (validationProjectKey) {
-    config.validationProjectKey = validationProjectKey;
+  if (env.JIRA_VALIDATION_PROJECT_KEY) {
+    config.validationProjectKey = env.JIRA_VALIDATION_PROJECT_KEY;
   }
 
   if (env.JIRA_DEFAULT_PICK_NEXT_JQL) {

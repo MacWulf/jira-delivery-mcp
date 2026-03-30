@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "description": "Jira delivery toolkit with an MCP server, policy modules, and optional Codex skills.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MacWulf/jira-delivery-mcp.git"
+  },
+  "homepage": "https://github.com/MacWulf/jira-delivery-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/MacWulf/jira-delivery-mcp/issues"
+  },
   "workspaces": [
     "services/*"
   ],
@@ -21,5 +30,13 @@
   },
   "engines": {
     "node": ">=24.0.0"
-  }
+  },
+  "keywords": [
+    "jira",
+    "mcp",
+    "model-context-protocol",
+    "automation",
+    "codex",
+    "workflow"
+  ]
 }

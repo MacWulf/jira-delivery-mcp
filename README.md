@@ -115,3 +115,7 @@ Additional validation and maintenance commands exist in the workspace, but they 
 The repository is already usable for local Jira operations and controlled validation flows, but it is still evolving.
 
 Use it as an extensible toolkit rather than a finished, one-size-fits-all product.
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
