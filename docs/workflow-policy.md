@@ -1,8 +1,8 @@
 # Workflow Policy
 
-## Cel workflow
+## Reference Delivery Lifecycle
 
-A szakmailag ajanlott standard delivery workflow:
+The recommended delivery lifecycle is:
 
 - `To Do`
 - `Selected`
@@ -12,32 +12,32 @@ A szakmailag ajanlott standard delivery workflow:
 - `QA`
 - `Done`
 
-## Miert ez a celallapot
+## Why This Lifecycle
 
-- A `To Do` backlog-allapotkent megtartja a nyers vagy meg nem kijelolt munkat.
-- A `Selected` csak azokat a ticketeket tartalmazza, amelyek ownership, dependency es readiness szempontbol tenyleg indithatok.
-- A `Blocked` kulon lifecycle-allapotot ad a mar elindult, de elakadt munkanak.
-- Az `In Review` es a `QA` kulonvalasztja a szakmai reviewt es az acceptance-kriterium alapjan torteno validaciot.
-- A `Done` csak ellenorzott befejezes utan hasznalhato.
+- `To Do` keeps raw backlog work separate from ready work.
+- `Selected` contains work that is refined, owned, and safe to start next.
+- `Blocked` makes active delivery interruptions visible.
+- `In Review` separates implementation completion from acceptance validation.
+- `QA` captures explicit validation against acceptance criteria.
+- `Done` should only be used once completion is verified.
 
-## Blokkolas kezelese
+## Blocking Model
 
-Hibrid modell:
+Use a hybrid model:
 
-- explicit Jira `Blocks` issue linkek maradnak az authoritativ dependency-forrasok
-- a `Blocked` statusz az aktualis vegrehajtasi allapotot mutatja, ha a munka tenylegesen megallt
+- Jira `Blocks` links remain the authoritative dependency source
+- the `Blocked` status represents the current execution state when progress has stopped
 
-Ennek oka:
+This gives two useful views:
 
-- a dependency-link mutatja, hogy pontosan mi blokkol
-- a `Blocked` statusz mutatja, hogy az issue aktivan nem dolgozhato tovabb
-- a kovetkezo issue valasztasnal a link es a statusz egyutt ad megbizhato kepet
+- the link shows exactly what blocks the work
+- the lifecycle state shows whether the work is currently stalled
 
-## Cel transitionok
+## Target Transitions
 
-- `Create`: uj issue -> `To Do`
+- `Create`: new issue -> `To Do`
 - `Select Work`: `To Do` -> `Selected`
-- `Start Work`: `To Do` vagy `Selected` -> `In Progress`
+- `Start Work`: `To Do` or `Selected` -> `In Progress`
 - `Mark Blocked`: `Selected`, `In Progress`, `In Review`, `QA` -> `Blocked`
 - `Resume Work`: `Blocked` -> `In Progress`
 - `Work Done`: `In Progress` -> `In Review`
@@ -47,24 +47,19 @@ Ennek oka:
 - `Accepted`: `QA` -> `Done`
 - `Return To Do`: `Selected`, `In Progress`, `Blocked`, `In Review`, `QA` -> `To Do`
 
-## Atallitasi elv
+## Rollout Principle
 
-A workflow-ujratervezes resze a projektnek, de elo projektet csak kontrollalt validation utan szabad atallitani.
+Workflow redesign is part of the project, but live projects should only be updated through a controlled validation flow.
 
-A sorrend:
+Recommended order:
 
-1. statuszpolitika veglegesitese
-2. hianyzo statuszok letrehozasa projekt-scope-ban
-3. workflow delta validation
-4. Jira workflow-admin valtoztatas
-5. asszisztens transition policy frissitese
-6. nyitott issue-kon es pick-next logikan utokovetes
+1. finalize lifecycle policy
+2. create missing statuses
+3. validate the workflow delta
+4. apply the Jira workflow change
+5. update assistant transition policy
+6. review open issues and next-issue selection behavior afterward
 
-## PO iranyelv
+## Execution Rule
 
-A workflow-atallitas utan az authoritativ lanc:
-
-- `To Do -> Selected -> In Progress -> In Review -> QA -> Done`
-- oldalag: `In Progress/In Review/QA -> Blocked -> In Progress`
-
-Az asszisztensnek ehhez kell alkalmazkodnia, de transitionnel tovabbra is csak a Jira altal tenylegesen felajanlott atmenetek alapjan dolgozhat.
+The assistant should adapt to the current project workflow, but it must always act through transitions that Jira actually exposes for the current issue.

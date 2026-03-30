@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Workflow Admin"
+  short_description: "Design and govern Jira workflows"
+  default_prompt: "Use -workflow-admin to design or change Jira workflow, screen, and field policy safely."

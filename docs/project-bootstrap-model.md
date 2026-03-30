@@ -1,34 +1,33 @@
 # Project Bootstrap Model
 
-## Cel
+## Purpose
 
-Az asszisztens ne csak issue-kat kezeljen, hanem kepes legyen uj Jira projektet is felhuzni kontrollalt modon.
+The assistant should not only manage issues; it should also be able to bootstrap a Jira project in a controlled way.
 
-## Ket kulon vilag
+## Two Common Project Modes
 
-### Team-managed / simplified projekt
+### Team-Managed / Simplified
 
-- gyors indulast ad
-- kevesebb admin overhead
-- a klasszikus workflow scheme es issue type scheme API-k gyakran ures vagy nem relevans eredmenyt adnak
-- jo MVP es kisebb, autonom csapatok szamara
+- fast to start
+- lower admin overhead
+- common choice for smaller autonomous teams
+- some classic scheme APIs may return limited or empty data
 
-### Company-managed / classic projekt
+### Company-Managed / Classic
 
-- kozponti workflow scheme
-- issue type scheme
-- erosebb admin kontroll
-- jobb valasztas, ha tobb projekt kozott egyseges governance kell
+- centralized workflow governance
+- issue type schemes and stronger administrative control
+- useful when multiple projects need consistent standards
 
-## Tenant-aware kovetkezmeny
+## Practical Implication
 
-Gyakorlati kovetkezmeny:
+Bootstrap logic must stay tenant-aware:
 
-- a klasszikus admin discovery endpointok egy resze elerheto
-- de a projektre rendelt scheme-ek team-managed projektnel uresen johetnek vissza
-- ezert a bootstrap logikanak kezelnie kell, hogy nem minden projekt klasszikus admin modellel mukodik
+- some admin discovery endpoints are available everywhere
+- project-assigned scheme data can be limited for team-managed projects
+- bootstrap planning should adapt to the actual project model instead of assuming one universal admin surface
 
-## Bootstrap fazisok
+## Bootstrap Phases
 
 ### 1. Discovery
 
@@ -37,43 +36,37 @@ Gyakorlati kovetkezmeny:
 - `get_project_admin_snapshot`
 - `list_workflow_schemes`
 
-### 2. Bootstrap plan
+### 2. Bootstrap Planning
 
-Az asszisztens eldonti:
+The assistant decides:
 
-- uj projekt kell vagy meglevobe seedeles
-- software / business / service_desk projekt kell
-- team-managed vagy classic irany kell
-- milyen template es milyen alap workflow-politika szukseges
+- whether to create a new project or seed an existing one
+- which project type fits best
+- which management model and delivery model are appropriate
+- which baseline workflow policy should apply
 
-### 3. Project creation
+### 3. Project Creation
 
 - `bootstrap_project_from_template`
 - `bootstrap_software_project`
 
-Az elso koros, ajanlott belepesi pont:
+Recommended entry point:
 
 - `bootstrap_software_project`
 
-Ez elrejti a template kulcsokat, es `kanban` vagy `scrum` alapjan valaszt software template-et.
+This hides raw template keys and lets the operator choose a software-oriented delivery model such as `kanban` or `scrum`.
 
-Az alacsonyabb szintu, explicit opcio:
+### 4. Backlog Seeding
 
-- `bootstrap_project_from_template`
+Planned extensions include:
 
-Ez akkor kell, ha pontos template kulcsot akarsz megadni.
+- epic, story, task, and subtask seeding
+- default dependencies
+- kickoff, architecture, and delivery starter items
+- optional documentation skeletons
 
-### 4. Backlog seed
+## Safety Model
 
-Kovetkezo iteracioban:
-
-- epic/story/task bontas
-- default dependency-k
-- kickoff / architecture / delivery ticketek
-- optional documentation skeleton
-
-## Biztonsagi modell
-
-- a projekt bootstrap is `dry-run` modban indul
-- live letrehozashoz `JIRA_EXECUTION_MODE=live` es `confirm=true` kell
-- a projektletrehozas nagy hatasu muvelet, ezert ez kulon write operation
+- project bootstrap starts in `dry-run`
+- live creation requires `JIRA_EXECUTION_MODE=live` and explicit confirmation
+- project creation is treated as a high-impact write operation

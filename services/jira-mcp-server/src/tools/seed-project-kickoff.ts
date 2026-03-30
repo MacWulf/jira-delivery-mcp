@@ -15,7 +15,7 @@ export function registerSeedProjectKickoffTool(
     {
       title: "Seed project kickoff backlog",
       description:
-        "Seed a reusable Codex-managed kickoff backlog into a Jira software project and optionally start the first work item.",
+        "Seed a reusable assistant-managed kickoff backlog into a Jira software project and optionally start the first work item.",
       inputSchema: {
         projectKey: z.string().min(1).optional(),
         startFirstIssue: z.boolean().default(true),

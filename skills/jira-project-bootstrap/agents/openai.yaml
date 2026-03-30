@@ -1,0 +1,3 @@
+interface:
+  display_name: "Jira Project Bootstrap"
+  short_description: "Bootstrap Jira backlog from a project brief"

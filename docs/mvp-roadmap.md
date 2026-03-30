@@ -1,22 +1,22 @@
-# MVP roadmap
+# MVP Roadmap
 
-## 1. fazis
+## Phase 1
 
-- Jira MCP server `stdio` transzporttal
-- valos Jira REST API kliens
-- Confluence oldal letrehozas
-- kulon tool regisztracios modulok
+- MCP server over `stdio`
+- real Jira REST client
+- optional Confluence page creation
+- modular tool registration
 
-## 2. fazis
+## Phase 2
 
-- dry-run mod
-- audit log
-- workflow policy kulon modulban
-- pontosabb hibaosztalyozas
+- `dry-run` execution mode
+- audit logging
+- workflow policy in dedicated modules
+- clearer error handling and classification
 
-## 3. fazis
+## Phase 3
 
-- approval gate
-- fejlettebb `pick_next_issue` strategia
-- remote futtathato transzport
-- kulon policy/orchestrator service
+- approval gates
+- more advanced `pick_next_issue` strategies
+- remote-friendly transport options
+- a dedicated policy and orchestration service layer

@@ -1,69 +1,69 @@
 # Product Roadmap
 
-## Cel
+## Purpose
 
-Ez a dokumentum a publikus, termek-szintu fejlesztesi iranyt foglalja ossze. Nem tenant-specifikus backlog dump, hanem egy rovid roadmap-nezet arról, hogy milyen kepessegek fele fejlodik a projekt.
+This document captures the public product direction for the repository. It is not a tenant-specific backlog dump; it is a concise view of the capabilities the toolkit is growing toward.
 
-## Meglevo alapkepessegek
+## Current Foundation
 
-- Jira issue create, update, link, comment, worklog
-- next issue selection dependency-aware logikaval
-- workflow discovery es statusz-szemantika
-- issue-be irt skill metadata feldolgozasa
-- kickoff backlog seed es bootstrap alapok
-- dependency drift es relink hygiene
-- workflow validation es kontrollalt apply
-- DPAPI-backed local secret handling
+- Jira issue create, update, link, comment, and worklog support
+- dependency-aware next-issue selection
+- workflow discovery and status semantics
+- skill metadata embedded in issue descriptions
+- kickoff backlog seeding and bootstrap foundations
+- dependency drift analysis and relink hygiene
+- workflow validation and controlled application
+- local secret handling options for secure development
 
-## Aktiv termekiranyok
+## Active Product Directions
 
 ### Workflow Governance
 
 - workflow discovery
-- statusz-szemantika es transition policy
-- migration-safe workflow apply
-- DoR / DoD policy reteg
+- status semantics and transition policy
+- migration-safe workflow application
+- Definition of Ready and Definition of Done policy layers
 
 ### Dependency Control
 
-- blocker snapshot
+- blocker snapshots
 - dependency-aware issue selection
 - stale link detection
 - relink hygiene
 
 ### Quality Control
 
-- acceptance criteria alapu tesztmunka
-- bug evidence es bug-linking
-- retest loop
-- done-logika minosegi kapukkal
+- acceptance-criteria-driven test work
+- bug evidence and bug linking
+- retest loops
+- completion logic with quality gates
 
 ### Change Control
 
-- valtozasok osztalyozasa
+- change classification
 - impact analysis
-- reopen / modify / create / relink dontesek
+- reopen, modify, create, and relink decisions
 
-### Traceability And Approval
+### Traceability and Approval
 
-- dontesi naplo
-- audit trail
-- approval gate nagy hatasu muveletekhez
+- decision logs
+- audit trails
+- approval gates for high-impact actions
 
-## Javasolt kovetkezo szeletek
+## Recommended Next Slices
 
-1. DoR / DoD policy
-2. issue type enablement strategy
+1. Definition of Ready and Definition of Done policy
+2. issue-type enablement strategy
 3. quality orchestration
-4. change request control
-5. approval gate es audit formalizalasa
+4. change-request control
+5. approval and audit formalization
 
-## Termekpozicio
+## Product Positioning
 
-Ez a projekt nem egyszeru Jira automation rule gyujtemeny.
+This project is not a collection of ad-hoc Jira automation rules.
 
-A cel egy olyan Jira-kozpontu operacios reteg, ahol:
+It aims to provide a Jira-centered operating layer where:
 
-- a reasoning skill-ekben tortenik
-- a vegrehajtas MCP toolokon es Jira REST API-kon megy
-- a workflow, dependency es quality logika explicit policykent jelenik meg
+- reasoning happens in skills and policy modules
+- execution happens through MCP tools and Jira REST APIs
+- workflow, dependency, and quality logic remain explicit and inspectable

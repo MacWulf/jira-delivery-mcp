@@ -1,129 +1,84 @@
-# Helyi Skill Teszteles
+# Local Skill Validation
 
-Ez az utmutato azt mutatja meg, hogyan probald ki helyben a Jira skill csomagot Codexben, biztonsagos sorrendben.
+This guide explains how to validate the Jira skill package locally in a controlled order.
 
-## Mire Van Szukseg
+## Prerequisites
 
-- A repo legyen lefordithato: `npm install`
-- A Jira token legyen DPAPI-val tarolva
-- A `.env`-ben legyen beallitva legalabb:
+- install dependencies with `npm install`
+- configure Jira credentials
+- store secrets securely when possible
+- set at least:
   - `JIRA_BASE_URL`
   - `JIRA_EMAIL`
-  - `JIRA_API_TOKEN_DPAPI_FILE`
+  - `JIRA_API_TOKEN_DPAPI_FILE` or `JIRA_API_TOKEN`
   - `JIRA_DEFAULT_PROJECT_KEY`
-  - `JIRA_TEST_PROJECT_KEY`
-- Legyen kulon validacios projekt a kontrollalt live probakhoz
-- A fo delivery projekt maradjon tiszta a validacios irasoktol
+  - `JIRA_VALIDATION_PROJECT_KEY` for controlled live-write checks
 
-## Elerheto Skillek
+## Available Skills
 
-- `jira-core`: router, tenant-aware alaplogika
-- `jira-project-bootstrap`: projekt briefbol indul Jira struktura
-- `jira-intake-refinement`: issue osztalyozas, bontas, readiness
-- `jira-execution-loop`: napi delivery loop, kovetkezo ticket, zaras
-- `jira-workflow-admin`: workflow, statuszok, admin policy
+- `jira-core`: routing and tenant-aware baseline behavior
+- `jira-project-bootstrap`: project bootstrap from a brief
+- `jira-intake-refinement`: issue typing, splitting, and readiness
+- `jira-execution-loop`: daily delivery execution
+- `jira-workflow-admin`: workflow and status governance
 
-## Jira Issue Skill Metadata
+## Skill Metadata in Jira Issues
 
-Ha a ticket description tartalmaz skill metadata blokkot, a Codex azt olvassa ki eloszor, es ahhoz igazitsa a vegrehajtasi skill stack-et.
+If the issue description contains an execution metadata block, the assistant should resolve it before execution.
 
-Javasolt szerkezet a Jira issue descriptionben:
+See [Jira issue skill metadata](./jira-issue-skill-metadata.md) for the format.
 
-    ## Execution metadata
+## Recommended Validation Sequence
 
-    ```yaml
-    codex:
-      required_skills:
-        - jira-core
-        - jira-project-bootstrap
-      optional_skills:
-        - jira-intake-refinement
-      execution_mode: dry-run
-    ```
+1. Confirm connectivity with `npm run smoke`.
+2. Try bootstrap behavior in `dry-run` mode.
+3. Validate backlog refinement against a real brief.
+4. Validate execution behavior on an open issue.
+5. Use live-write validation only in a dedicated validation project.
+6. Only run live writes against a production delivery project after the flow is stable.
 
-A reszletes specifikacio itt van: [jira-issue-skill-metadata.md](./jira-issue-skill-metadata.md)
+## Prompt Examples
 
-## Javasolt Tesztelesi Sorrend
-
-1. Ellenorizd, hogy a Jira kapcsolat mukodik.
-2. Probald ki a bootstrap skillt dry-run modban.
-3. Probald ki az intake skillt egy valos briefen.
-4. Probald ki az execution skillt egy nyitott ticketen.
-5. Csak ezutan menj live modba a dedikalt validacios projektben.
-6. A fo delivery projektet csak akkor hasznald live irashoz, ha mar stabil a flow.
-
-## Prompt Mintak
-
-### 1. Bootstrap dry-run
+### Bootstrap Dry Run
 
 ```text
-Hasznald a $jira-project-bootstrap skillt. Van egy uj projektbriefem, ebbol szeretnek Jira projekt strukturat es indulou backlogot. Eloszor dry-runban add meg, milyen epic-ek, story-k es task-ok kellenenek, valamint mi legyen az elso delivery slice.
+Use the $jira-project-bootstrap skill. I have a new project brief and want a Jira structure and starter backlog. Start in dry-run mode and suggest the first delivery slice.
 ```
 
-### 2. Intake refinement
+### Backlog Refinement
 
 ```text
-Hasznald a $jira-intake-refinement skillt. Ezt a backlogot szeretnem tisztazni, osztalyozni es readiness szerint rendezni. Szedd szet a tobbcelu elemeket, javasolj parent kapcsolatokat, es mondd meg, mi nem ready meg.
+Use the $jira-intake-refinement skill. Clean up this backlog, classify the items, split oversized work, and tell me what is not ready yet.
 ```
 
-### 3. Execution loop
+### Execution Loop
 
 ```text
-Hasznald a $jira-execution-loop skillt. Valaszd ki a kovetkezo nem blokkolt ticketet, ellenorizd a transitionoket, majd vezess vegig rajta egy tiszta delivery loopot kommenttel, handoffal es megfelelo zarassal.
+Use the $jira-execution-loop skill. Pick the next unblocked ticket, resolve the valid transitions, and guide it through a clean delivery loop with comments and the correct handoff.
 ```
 
-### 4. Workflow admin
+### Workflow Administration
 
 ```text
-Hasznald a $jira-workflow-admin skillt. A jelenlegi workflowt szeretnem atgondolni, es ha kell, uj statuszokat, transitionoket vagy required field policyt javasolni tenant-aware modon.
+Use the $jira-workflow-admin skill. Review the current project workflow and suggest tenant-aware status, transition, or field-policy improvements where needed.
 ```
 
-### 5. Project bootstrap
+### Project Bootstrap
 
 ```text
-Hasznald a $jira-core es $jira-project-bootstrap skilleket. Egy uj projektet akarok felhuzni briefbol. Adj egy minimalis, de hasznalhato Jira kezdoszerkezetet, es csak annyi ticketet seedelj, amennyivel azonnal el lehet kezdeni a munkat.
+Use the $jira-core and $jira-project-bootstrap skills. Build a minimal but usable Jira starting structure from a project brief and seed only enough work to start safely.
 ```
 
-### 6. Jovahagyott tervbol Jira issue lista
+## Safe Progression
 
-```text
-Hasznald a $jira-core, $jira-project-bootstrap es $jira-intake-refinement skilleket. A brief alapjan mar van egy jovahagyott bootstrap tervunk. Alakitsd at konkret Jira issue listava: 1 epic, starter story-k, day-one taskok, explicit dependency-k, es jelold meg, melyik legyen az elso aktiv ticket a validacios projektben.
-```
+- Start in `dry-run`.
+- Read before writing.
+- Use a dedicated validation project for live checks.
+- Discover real Jira transitions before changing status.
+- Only move work to `Done` when it is actually complete.
 
-### 7. Skill metadata-vel jelolt ticket olvasasa
+## Quick Metadata Validation
 
-```text
-Hasznald a $jira-core es $jira-execution-loop skilleket. Olvasd be a Jira issue leirasat, oldd fel a benne talalhato skill metadata blokkot, majd a required skills alapjan valaszd ki a vegrehajtashoz szukseges skilleket. Ha a metadata hianyzik vagy ellentmondasos, jelezd ezt eloszor.
-```
+If you specifically want to validate round-trip skill metadata behavior, run:
 
-## Biztonsagos Elohaladas
-
-- Kezdd `dry-run` modban.
-- Eloszor csak olvassatok, ne irjatok.
-- Live irashoz csak a dedikalt validacios projektet hasznald.
-- Ha a workflow vagy a statuszok nem egyertelmuek, eloszor olvasd ki a Jira valos transition listajat.
-- A `Done` statuszt csak akkor hasznald, ha a work tenyleg kesz.
-
-## Mit Varj Az Elso Teszttol
-
-- helyes issue tipus-besorolas
-- ertelmes parent/child szerkezet
-- kis, indulhato backlog
-- atgondolt elso delivery slice
-- biztos dry-run, mielott barmi live iras tortenik
-
-## Atlepes Live Irashoz
-
-Ha a dry-run backlog jonak tunik, a kovetkezo helyi prompttal lehet tovabblepni a tenyleges Jira iras fele a dedikalt validacios projektben:
-
-```text
-Hasznald a $jira-core, $jira-project-bootstrap es $jira-intake-refinement skilleket. A C:\\Codex\\Jira_integration\\fixtures\\sample-project-brief.md brief alapjan keszits konkret Jira issue listat, majd hozz letre csak a minimalis indulou backlogot a dedikalt validacios projektben. Eloszor ellenorizd a duplikaciokat es a valid issue type-okat, utana dolgozz. Ha valami nem egyertelmu, allj meg az iras elott.
-```
-
-## Gyors Metadata Teszt
-
-Ha kifejezetten azt akarod ellenorizni, hogy a Jira issue descriptionben tarolt skill metadata visszaolvashato-e, futtasd:
-
-`npm run skill-metadata-live-test`
-
-Ez a dedikalt validacios projektben letrehoz egy kontrollalt issue-t, beirja a skill metadata blokkot, visszaolvassa, majd riportot keszit az `artifacts` mappaba.
+`npm run validate:skill-metadata`

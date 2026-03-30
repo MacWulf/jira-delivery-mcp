@@ -1,240 +1,223 @@
-# Tool Contractok
+# Tool Contracts
 
-## MVP toolkeszlet
+## Core Read Tools
 
 ### `list_projects`
 
-- Cel: lathato Jira projektek listazasa
-- Kotelezo input: nincs
-- Kimenet: elerheto projektek listaja
-- Guardrail: csak olvasasi muvelet
+- Purpose: list visible Jira projects
+- Required input: none
+- Output: visible project list
+- Guardrail: read-only
 
 ### `get_project`
 
-- Cel: projekt metaadatok lekerese
-- Kotelezo input: `projectKey`
-- Kimenet: projekt reszletei
-- Guardrail: csak olvasasi muvelet
+- Purpose: fetch project metadata
+- Required input: `projectKey`
+- Output: project details
+- Guardrail: read-only
 
 ### `get_project_admin_snapshot`
 
-- Cel: projekt admin snapshot lekerese
-- Kotelezo input: `projectKey`
-- Kimenet: projekt metaadatok, workflow scheme es issue type scheme kontextus
-- Guardrail: csak olvasasi muvelet
+- Purpose: fetch an administrative snapshot of the project
+- Required input: `projectKey`
+- Output: project metadata plus workflow and issue-type context when available
+- Guardrail: read-only
 
 ### `list_workflow_schemes`
 
-- Cel: elerheto workflow scheme-ek listazasa
-- Kotelezo input: nincs
-- Kimenet: workflow scheme lista
-- Guardrail: csak olvasasi muvelet
+- Purpose: list visible workflow schemes
+- Required input: none
+- Output: workflow scheme list
+- Guardrail: read-only
 
 ### `discover_project_workflow`
 
-- Cel: projekt workflow discovery snapshot lekerese statuszokkal, sampled transitionokkel es statusz-szemantikaval
-- Kotelezo input: `projectKey`
-- Kimenet: management model, issue type/status snapshot, transition mintak es policy hint-ek
-- Guardrail: csak olvasasi muvelet, a tenant tenyleges workflowjat mintazza es nem feltetelez klasszikus scheme adatot
+- Purpose: capture a workflow discovery snapshot with statuses, sampled transitions, and semantic hints
+- Required input: `projectKey`
+- Output: management model, issue-type and status snapshot, sampled transitions, policy hints
+- Guardrail: read-only and based on the actual tenant state
 
 ### `preview_standard_project_workflow`
 
-- Cel: a standard Codex-managed workflow delta es validation eredmenyenek elozetes megtekintese
-- Kotelezo input: `projectKey`
-- Kimenet: target statuszok, workflow update payload es validation eredmeny
-- Guardrail: csak olvasasi muvelet, nem publishol workflowt
-
-### `apply_standard_project_workflow`
-
-- Cel: a standard Codex-managed workflow project-szintu alkalmazasa
-- Kotelezo input: `projectKey`
-- Kimenet: validalt es publisholt workflow update eredmenye
-- Guardrail: alapbol dry-run, live modban explicit `confirm=true` kell
-
-### `preview_standard_project_workflow`
-
-- Cel: a standard delivery workflow delta read-only tervezese es validalasa projekt-szinten
-- Kotelezo input: `projectKey`
-- Kimenet: cel statuszok, transitionok, ujrafelhasznalt vagy ujonnan letrehozando statuszok, valamint a Jira workflow update validation eredmenye
-- Guardrail: nem publishol workflow-t, csak ellenorzi az alkalmazhatosagot
-
-### `apply_standard_project_workflow`
-
-- Cel: a standard `To Do -> Selected -> In Progress -> Blocked -> In Review -> QA -> Done` workflow tenyleges alkalmazasa
-- Kotelezo input: `projectKey`
-- Kimenet: publisholt workflow delta, validation eredmeny es a letrehozott statuszok listaja
-- Guardrail: alapbol dry-run, live modban explicit `confirm=true` kell
+- Purpose: preview a reusable delivery workflow delta and validation result
+- Required input: `projectKey`
+- Output: target statuses, workflow update payload, validation result
+- Guardrail: read-only, does not publish workflow changes
 
 ### `analyze_dependency_drift`
 
-- Cel: dependency drift, duplicate blokkok, stale link candidate-ek es expected-vs-actual dependency eltetesek read-only auditja
-- Kotelezo input: `projectKey` vagy `jql`
-- Kimenet: missing es unexpected dependency-k, duplicate edge-ek, stale dependency candidate-ek es blocked-status konfliktusok
-- Guardrail: csak olvasasi muvelet, relink vagy unlink javaslatot ad, de nem torol es nem linkel automatikusan
+- Purpose: audit dependency drift, duplicate edges, stale-link candidates, and expected-versus-actual dependency differences
+- Required input: `projectKey` or `jql`
+- Output: missing dependencies, unexpected dependencies, duplicate edges, stale candidates, blocked-state conflicts
+- Guardrail: read-only
 
 ### `get_issue`
 
-- Cel: egy issue reszletes lekerdezese
-- Kotelezo input: `issueKey`
-- Kimenet: issue mezok, statusz, execution metadata, dependency snapshot es dependency-status signalok
-- Guardrail: csak olvasasi muvelet
+- Purpose: fetch issue details
+- Required input: `issueKey`
+- Output: issue fields, status, execution metadata, dependency snapshot, status signals
+- Guardrail: read-only
 
 ### `search_issues`
 
-- Cel: issue-k lekerdezese JQL alapjan
-- Kotelezo input: `jql`
-- Kimenet: issue lista kulcsmezokkel
-- Guardrail: felso korlat a `maxResults` mezon
-
-### `bootstrap_project_from_template`
-
-- Cel: uj Jira projekt letrehozasa explicit template es project type alapjan
-- Kotelezo input: `key`, `name`, `projectTypeKey`, `projectTemplateKey`
-- Kimenet: letrehozott projekt metadatai vagy dry-run payload
-- Guardrail: alapbol dry-run, live modban explicit `confirm=true` kell
-
-### `bootstrap_software_project`
-
-- Cel: uj software projekt letrehozasa magasabb szintu delivery modellel
-- Kotelezo input: `key`, `name`
-- Kimenet: letrehozott projekt metadatai vagy dry-run payload
-- Guardrail: alapbol `team-managed` + `kanban` irany, live modban explicit `confirm=true` kell
-
-### `create_issue`
-
-- Cel: uj Jira issue letrehozasa
-- Kotelezo input: `summary`, `issueType`
-- Kimenet: letrehozott issue kulcs es URL
-- Guardrail: projektkulcs nelkul csak default projektre enged
-
-### `update_issue`
-
-- Cel: mezok frissitese meglevo issue-n
-- Kotelezo input: `issueKey`
-- Kimenet: sikeres frissites visszaigazolasa
-- Guardrail: csak explicit mezofrissitesek futnak
+- Purpose: query issues with JQL
+- Required input: `jql`
+- Output: issue list with selected fields
+- Guardrail: bounded by `maxResults`
 
 ### `get_transitions`
 
-- Cel: ervenyes statuszatmenetek lekerdezese
-- Kotelezo input: `issueKey`
-- Kimenet: transition lista azonositoval es nevvel
-- Guardrail: nem feltetelez workflow-t, mindig Jira-bol kerdezi le
-
-### `transition_issue`
-
-- Cel: statuszvaltas
-- Kotelezo input: `issueKey`, `transitionId`
-- Kimenet: sikeres transition visszaigazolasa
-- Guardrail: csak Jira altal visszaadott transition ID hasznalhato
-
-### `transition_issue_by_name`
-
-- Cel: statuszvaltas emberi olvashato transition nev alapjan
-- Kotelezo input: `issueKey`, `transitionName`
-- Kimenet: a feloldott transition es a vegrehajtasi eredmeny
-- Guardrail: csak az issue-hoz tenylegesen elerheto transition nev fogadhato el
-
-### `link_issues`
-
-- Cel: dependency vagy kapcsolati link letrehozasa
-- Kotelezo input: `typeName`, `inwardIssueKey`, `outwardIssueKey`
-- Kimenet: sikeres linkeles visszaigazolasa
-- Guardrail: onmagara linkeles tiltott
-
-### `delete_issue_link`
-
-- Cel: Jira issue link torlese link ID alapjan relink hygiene vagy drift-javitas celjabol
-- Kotelezo input: `linkId`
-- Kimenet: sikeres torles visszaigazolasa
-- Guardrail: live modban explicit `confirm=true` kell, es audit-safe hasznalat csak drift elemzes utan ajanlott
+- Purpose: fetch valid status transitions for an issue
+- Required input: `issueKey`
+- Output: transition list with names and IDs
+- Guardrail: always queries Jira directly
 
 ### `get_issue_link_types`
 
-- Cel: elerheto issue link tipusok lekerese
-- Kotelezo input: nincs
-- Kimenet: link tipus lista
-- Guardrail: csak olvasasi muvelet
+- Purpose: list available issue-link types
+- Required input: none
+- Output: link-type list
+- Guardrail: read-only
+
+## Core Write Tools
+
+### `bootstrap_project_from_template`
+
+- Purpose: create a new Jira project from an explicit template
+- Required input: `key`, `name`, `projectTypeKey`, `projectTemplateKey`
+- Output: created project metadata or a dry-run payload
+- Guardrail: defaults to `dry-run`; live mode requires explicit confirmation
+
+### `bootstrap_software_project`
+
+- Purpose: create a software project from higher-level delivery choices
+- Required input: `key`, `name`
+- Output: created project metadata or a dry-run payload
+- Guardrail: defaults to dry-run and sensible software-project defaults
+
+### `create_issue`
+
+- Purpose: create a new Jira issue
+- Required input: `summary`, `issueType`
+- Output: created issue key and URL
+- Guardrail: without an explicit project key, falls back to the configured default project
+
+### `update_issue`
+
+- Purpose: update fields on an existing issue
+- Required input: `issueKey`
+- Output: update confirmation
+- Guardrail: only explicit field updates are applied
+
+### `transition_issue`
+
+- Purpose: transition an issue by Jira transition ID
+- Required input: `issueKey`, `transitionId`
+- Output: transition confirmation
+- Guardrail: only a Jira-reported transition ID may be used
+
+### `transition_issue_by_name`
+
+- Purpose: transition an issue by human-readable transition name
+- Required input: `issueKey`, `transitionName`
+- Output: resolved transition plus execution result
+- Guardrail: only transition names actually available on that issue may be used
+
+### `link_issues`
+
+- Purpose: create a dependency or relationship link
+- Required input: `typeName`, `inwardIssueKey`, `outwardIssueKey`
+- Output: link confirmation
+- Guardrail: self-linking is rejected
+
+### `delete_issue_link`
+
+- Purpose: remove an issue link by link ID during controlled relink or drift cleanup
+- Required input: `linkId`
+- Output: deletion confirmation
+- Guardrail: live mode requires explicit confirmation
 
 ### `add_comment`
 
-- Cel: komment hozzaadasa issue-hoz
-- Kotelezo input: `issueKey`, `comment`
-- Kimenet: komment azonosito es URL
-- Guardrail: ures komment tiltott
+- Purpose: add a Jira comment
+- Required input: `issueKey`, `comment`
+- Output: comment ID and URL
+- Guardrail: empty comments are rejected
 
 ### `add_worklog`
 
-- Cel: worklog hozzaadasa issue-hoz
-- Kotelezo input: `issueKey`, `timeSpentSeconds`
-- Kimenet: worklog visszaigazolas
-- Guardrail: live modban explicit megerosites kell
-
-### `pick_next_issue`
-
-- Cel: kovetkezo feldolgozando issue kivalasztasa
-- Kotelezo input: nincs
-- Kimenet: egy ajanlott issue, execution ordering, dependency snapshot, status signalok, dependency miatt blokkolt es workflow-szinten blokkolt jeloltek listaja
-- Guardrail: csak nem lezart es nem `Blocked` lifecycle-allapotban levo issue johet szoba
-
-### `seed_project_kickoff`
-
-- Cel: egy ujrahasznalhato Codex-managed kickoff backlog felhuzasa a projektbe
-- Kotelezo input: nincs, ha van default projekt
-- Kimenet: letrehozott vagy ujrahasznalt issue-k, dependency-k es az elinditott elso issue
-- Guardrail: live modban explicit `confirm=true` kell, es az elso munkatetel csak nem blokkolt issue lehet
-
-### `start_issue_work`
-
-- Cel: egy nem blokkolt issue munkainditasa
-- Kotelezo input: `issueKey`
-- Kimenet: a feloldott in-progress transition
-- Guardrail: done vagy blokkolt issue nem indithato el
-
-### `select_issue_for_work`
-
-- Cel: issue mozgatasa a `Selected` ready queue-ba
-- Kotelezo input: `issueKey`
-- Kimenet: a feloldott selected transition
-- Guardrail: done vagy dependency-altal blokkolt issue ne keruljon `Selected` allapotba
-
-### `handoff_issue`
-
-- Cel: issue review vagy handoff allapotba mozgatasa
-- Kotelezo input: `issueKey`
-- Kimenet: a feloldott review transition
-- Guardrail: csak a tenantban tenyleg letezo review jellegu transition hasznalhato
-
-### `send_issue_to_qa`
-
-- Cel: issue mozgatasa a `QA` validacios fazisba
-- Kotelezo input: `issueKey`
-- Kimenet: a feloldott QA transition
-- Guardrail: blokkolt issue ne menjen QA-ba, es csak a tenylegesen letezo QA transition hasznalhato
-
-### `mark_issue_blocked`
-
-- Cel: issue explicit `Blocked` allapotba rakasa
-- Kotelezo input: `issueKey`, `comment`
-- Kimenet: a feloldott blocked transition
-- Guardrail: indoklo komment kotelezo, live modban explicit megerosites kell
-
-### `close_issue_if_ready`
-
-- Cel: issue lezarasa readiness checklist alapjan
-- Kotelezo input: `issueKey`, `testsPassed`, `docsUpdated`, `reviewComplete`
-- Kimenet: a feloldott done transition
-- Guardrail: a checklist minden eleme igaz legyen, es az issue ne legyen blokkolt
+- Purpose: add a worklog entry
+- Required input: `issueKey`, `timeSpentSeconds`
+- Output: worklog confirmation
+- Guardrail: live mode requires explicit confirmation
 
 ### `create_doc_page`
 
-- Cel: dokumentacios oldal letrehozasa Confluence-ben
-- Kotelezo input: `spaceId`, `title`, `bodyStorage`
-- Kimenet: letrehozott oldal azonosito es URL
-- Guardrail: csak konfiguralt Confluence kapcsolat eseten aktiv
+- Purpose: create a Confluence page
+- Required input: `spaceId`, `title`, `bodyStorage`
+- Output: created page ID and URL
+- Guardrail: only active when Confluence is configured
 
-## Live irasi szabaly
+## Higher-Level Delivery Tools
 
-- Az iro toolok alapbol `dry-run` modban futnak.
-- Live modban az irashoz `confirm=true` kell.
-- A kontrollalt live tesztfolyam csak explicit `JIRA_TEST_PROJECT_KEY` mellett fut.
+### `pick_next_issue`
+
+- Purpose: choose the next issue to work on
+- Required input: none
+- Output: a recommended issue, execution ordering, dependency snapshot, status signals, blocked candidates
+- Guardrail: excludes completed work and blocked lifecycle candidates
+
+### `seed_project_kickoff`
+
+- Purpose: seed a reusable kickoff backlog into a Jira project and optionally start the first work item
+- Required input: none if a default project is configured
+- Output: created or reused issues, dependency links, and the optionally started first issue
+- Guardrail: live mode requires explicit confirmation
+
+### `select_issue_for_work`
+
+- Purpose: move work into a ready queue such as `Selected`
+- Required input: `issueKey`
+- Output: resolved selection transition
+- Guardrail: completed or dependency-blocked work should not be selected
+
+### `start_issue_work`
+
+- Purpose: start work on an eligible issue
+- Required input: `issueKey`
+- Output: resolved in-progress transition
+- Guardrail: completed or blocked work is rejected
+
+### `handoff_issue`
+
+- Purpose: move work into review or handoff
+- Required input: `issueKey`
+- Output: resolved review transition
+- Guardrail: only valid review-like transitions may be used
+
+### `send_issue_to_qa`
+
+- Purpose: move work into a QA or validation phase
+- Required input: `issueKey`
+- Output: resolved QA transition
+- Guardrail: blocked work should not move to QA
+
+### `mark_issue_blocked`
+
+- Purpose: move an issue into a blocked lifecycle state
+- Required input: `issueKey`, `comment`
+- Output: resolved blocked transition
+- Guardrail: a reason is required and live mode requires confirmation
+
+### `close_issue_if_ready`
+
+- Purpose: close an issue when readiness conditions are met
+- Required input: `issueKey`, `testsPassed`, `docsUpdated`, `reviewComplete`
+- Output: resolved done transition
+- Guardrail: all checklist items must pass and the issue must not be blocked
+
+## Live Write Rule
+
+- Write tools default to `dry-run`.
+- Live mode requires explicit confirmation.
+- Controlled validation flows should use a dedicated validation project when one is configured.

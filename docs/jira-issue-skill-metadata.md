@@ -1,18 +1,18 @@
 # Jira Issue Skill Metadata
 
-Ez a spec azt definialja, hogyan kell Jira issue leirasaba beirni a szukseges es optionalis skilleket, hogy a Codex a vegrehajtas elott fel tudja oldani a megfelelo skill stack-et.
+This specification defines how to embed required and optional skills into a Jira issue description so the assistant can resolve the right skill stack before execution.
 
-## Cel
+## Purpose
 
-- A ticket ne csak leirja a munkat, hanem jelezze azt is, milyen Codex skill(ek) kellenek a vegrehajtasahoz.
-- A metadata segitse a routingot, de ne helyettesitse a ticket tartalmat.
-- A formatum legyen egyertelmu, gepileg olvashato es tenant-aware.
+- Make the ticket describe not only the work, but also the execution context.
+- Support routing without replacing the actual issue description.
+- Keep the format machine-readable and easy to review.
 
-## Elhelyezes
+## Placement
 
-A skill metadata a Jira issue `Description` reszeben jelenjen meg, egy kulon, jol elkulonulo blokkban.
+Store the skill metadata inside the Jira issue `Description` field in a dedicated block.
 
-Javasolt szerkezet:
+Recommended structure:
 
     ## Execution metadata
 
@@ -26,9 +26,7 @@ Javasolt szerkezet:
       execution_mode: dry-run
     ```
 
-## Javasolt Format
-
-Hasznald a kovetkezo szerkezetet a metadata blokkban:
+## Recommended Format
 
 ```yaml
 codex:
@@ -41,35 +39,35 @@ codex:
   notes: "Optional short routing note"
 ```
 
-### Fields
+## Fields
 
 - `required_skills`
-  A vegrehajtaskor kotelezoen betoltendo skillek listaja.
+  Skills that must be loaded for execution.
 - `optional_skills`
-  Olyan skillek, amelyek hasznosak lehetnek, de nem blokkoljak a vegrehajtast.
+  Skills that may help, but should not block progress.
 - `execution_mode`
-  Optionalis jelzes arra, hogy a task `dry-run`, `implement`, `review`, vagy `admin` jellegu.
+  Optional hint such as `dry-run`, `implement`, `review`, or `admin`.
 - `notes`
-  Rogvid, emberi olvashato megjegyzes a routinghoz.
+  A short human-readable routing note.
 
-## Olvasasi Szabalyok
+## Read Rules
 
-- A Codex eloszor mindig a ticket tartalmat olvassa, majd utana oldja fel a skill metadata-t.
-- Ha a skill nem elerheto lokalisan, ezt jelezni kell, nem szabad helyettesiteni talalgatassal.
-- A `required_skills` nem tanacs, hanem vegrehajtasi elvartas.
-- Az `optional_skills` csak akkor hasznalando, ha relevansak, es nem novelik feleslegesen a kontextust.
+- Read the ticket first, then resolve the skill metadata.
+- If a referenced skill is unavailable locally, report that clearly.
+- Treat `required_skills` as an execution expectation, not a suggestion.
+- Only use optional skills when they add value without creating unnecessary context.
 
-## Biztonsagos Hasznalat
+## Safe Usage
 
-- Ne tegyel a skill metadata-ba bizalmas informaciot.
-- Ne hasznald a metadata blokkot feladatleiras helyett.
-- Ne sorolj fel minden elkepzelheto skillt, csak azokat, amelyek tenyleg kellenek.
-- Ne hasznald a blokkot workflow vagy approval policy megkerulesere.
-- A metadata csak routing-hint, nem jogosultsagi mechanizmus.
+- Do not put secrets into skill metadata.
+- Do not use the metadata block instead of a real issue description.
+- Do not list every possible skill; only list the ones that materially matter.
+- Do not use metadata to bypass workflow or approval policy.
+- Treat metadata as routing guidance, not as an authorization mechanism.
 
-## Javasolt Hasznalat
+## Suggested Examples
 
-### Projekt bootstrap
+### Project Bootstrap
 
 ```yaml
 codex:
@@ -81,7 +79,7 @@ codex:
   execution_mode: dry-run
 ```
 
-### Backlog refinement
+### Backlog Refinement
 
 ```yaml
 codex:
@@ -93,7 +91,7 @@ codex:
   execution_mode: refine
 ```
 
-### Delivery loop
+### Delivery Execution
 
 ```yaml
 codex:
@@ -107,7 +105,6 @@ codex:
 
 ## Fallback
 
-Ha nincs metadata blokk, a Codex a ticket szovegebol es a projekt kontextusabol inferalja a szukseges skilleket.
+If no metadata block exists, the assistant can infer the required skill stack from the ticket text and project context.
 
-Ha van metadata blokk, az elsobbseget elvezi az inferenciaval szemben, feltve hogy nem ellentmondasos.
-
+If the metadata block exists, it takes precedence unless it is contradictory or invalid.

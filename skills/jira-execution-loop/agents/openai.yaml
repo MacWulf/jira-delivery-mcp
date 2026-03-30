@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Execution"
+  short_description: "Run the Jira delivery loop safely"
+  default_prompt: "Use -execution-loop to pick the next Jira issue, start work, record progress, and close it safely."

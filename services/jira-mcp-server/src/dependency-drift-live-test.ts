@@ -10,6 +10,7 @@ import { JiraApi } from "./services/jira-api.js";
 type Report = {
   ranAt: string;
   projectKey: string;
+  seededIssueKeys: string[];
   assertions: Array<{
     name: string;
     ok: boolean;
@@ -18,49 +19,96 @@ type Report = {
 };
 
 async function main(): Promise<void> {
+  requireLiveConfirmation();
+
   const config = loadConfig();
   const jiraApi = new JiraApi(config);
   const dependencyDriftService = new DependencyDriftService(jiraApi, config);
+  const projectKey =
+    config.validationProjectKey ?? config.defaultProjectKey ?? undefined;
+
+  if (!projectKey) {
+    throw new Error(
+      "Missing JIRA_DEFAULT_PROJECT_KEY or JIRA_VALIDATION_PROJECT_KEY. Refusing to run dependency drift validation without an explicit target project."
+    );
+  }
+
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const label = `dependency-drift-${timestamp.toLowerCase()}`;
+
+  const issueA = await jiraApi.createIssue({
+    projectKey,
+    issueType: "Task",
+    summary: `[Validation] Drift source ${timestamp}`,
+    description: "Seeded by the dependency drift validation flow.",
+    labels: [label, "dependency-drift-validation"]
+  });
+  const issueB = await jiraApi.createIssue({
+    projectKey,
+    issueType: "Task",
+    summary: `[Validation] Drift middle ${timestamp}`,
+    description: "Seeded by the dependency drift validation flow.",
+    labels: [label, "dependency-drift-validation"]
+  });
+  const issueC = await jiraApi.createIssue({
+    projectKey,
+    issueType: "Task",
+    summary: `[Validation] Drift target ${timestamp}`,
+    description: "Seeded by the dependency drift validation flow.",
+    labels: [label, "dependency-drift-validation"]
+  });
+
+  await jiraApi.linkIssues({
+    typeName: "Blocks",
+    inwardIssueKey: issueB.key,
+    outwardIssueKey: issueA.key,
+    comment: "Validation dependency link"
+  });
+  await jiraApi.linkIssues({
+    typeName: "Blocks",
+    inwardIssueKey: issueC.key,
+    outwardIssueKey: issueB.key,
+    comment: "Validation dependency link"
+  });
+
   const snapshot = await dependencyDriftService.analyze({
-    jql: 'project = "KAN" AND issuekey in ("KAN-57","KAN-58","KAN-59","KAN-47")',
+    jql: `labels = "${label}" ORDER BY key ASC`,
     expectedDependencies: [
-      { sourceIssueKey: "KAN-57", targetIssueKey: "KAN-58", typeName: "Blocks" },
-      { sourceIssueKey: "KAN-57", targetIssueKey: "KAN-59", typeName: "Blocks" },
-      { sourceIssueKey: "KAN-57", targetIssueKey: "KAN-47", typeName: "Blocks" },
-      { sourceIssueKey: "KAN-58", targetIssueKey: "KAN-59", typeName: "Blocks" }
+      { sourceIssueKey: issueB.key, targetIssueKey: issueA.key, typeName: "Blocks" },
+      { sourceIssueKey: issueC.key, targetIssueKey: issueB.key, typeName: "Blocks" }
     ]
   });
   const assertions: Report["assertions"] = [
     {
-      name: "Dependency drift has no missing expected dependencies in the active dependency lane",
+      name: "Dependency drift has no missing expected dependencies",
       ok: snapshot.missingExpectedDependencies.length === 0,
       details: {
         missingExpectedDependencies: snapshot.missingExpectedDependencies
       }
     },
     {
-      name: "Dependency drift has no unexpected dependencies in scope",
+      name: "Dependency drift has no unexpected dependencies",
       ok: snapshot.unexpectedDependencies.length === 0,
       details: {
         unexpectedDependencies: snapshot.unexpectedDependencies
       }
     },
     {
-      name: "Dependency drift detects no blocked status conflicts in the active lane",
+      name: "Dependency drift has no blocked-status conflicts",
       ok: snapshot.blockedStatusConflicts.length === 0,
       details: {
         blockedStatusConflicts: snapshot.blockedStatusConflicts
       }
     },
     {
-      name: "Dependency drift detects no duplicate dependency edges",
+      name: "Dependency drift has no duplicate dependency edges",
       ok: snapshot.duplicateDependencies.length === 0,
       details: {
         duplicateDependencies: snapshot.duplicateDependencies
       }
     },
     {
-      name: "Dependency drift detects no stale dependency candidates in the active lane",
+      name: "Dependency drift has no stale dependency candidates",
       ok: snapshot.staleDependencies.length === 0,
       details: {
         staleDependencies: snapshot.staleDependencies
@@ -70,15 +118,15 @@ async function main(): Promise<void> {
 
   const report: Report = {
     ranAt: new Date().toISOString(),
-    projectKey: config.defaultProjectKey ?? "KAN",
+    projectKey,
+    seededIssueKeys: [issueA.key, issueB.key, issueC.key],
     assertions
   };
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const artifactDir = resolve(process.cwd(), "artifacts");
   const artifactPath = resolve(
     artifactDir,
-    `dependency-drift-live-test-${timestamp}.json`
+    `dependency-drift-validation-${timestamp}.json`
   );
 
   await mkdir(artifactDir, { recursive: true });
@@ -86,7 +134,7 @@ async function main(): Promise<void> {
 
   const failed = assertions.filter((assertion) => !assertion.ok);
 
-  console.log(`Dependency drift live test report: ${artifactPath}`);
+  console.log(`Dependency drift validation report: ${artifactPath}`);
 
   if (failed.length > 0) {
     console.error(JSON.stringify(failed, null, 2));
@@ -94,7 +142,15 @@ async function main(): Promise<void> {
     return;
   }
 
-  console.log("Dependency drift live test OK.");
+  console.log("Dependency drift validation OK.");
+}
+
+function requireLiveConfirmation(): void {
+  if (!process.argv.includes("--confirm-live")) {
+    throw new Error(
+      "Refusing to run live Jira writes without the --confirm-live flag."
+    );
+  }
 }
 
 main().catch((error) => {

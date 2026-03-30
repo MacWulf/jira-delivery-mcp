@@ -113,7 +113,7 @@ export function buildCodexManagedWorkflowUpdate(input: {
     workflows: [
       {
         ...input.workflow,
-        description: "Codex-managed lifecycle for Jira integration delivery.",
+        description: "Assistant-managed lifecycle for Jira delivery work.",
         statuses: TARGET_STATUS_ORDER.map((target) => ({
           statusReference: requireGeneratedStatusReference(
             statusReferenceByName,

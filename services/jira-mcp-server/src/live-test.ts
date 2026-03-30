@@ -25,12 +25,12 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const jiraApi = new JiraApi(config);
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const label = `codex-live-test-${timestamp.toLowerCase()}`;
-  const projectKey = config.testProjectKey;
+  const label = `validation-smoke-${timestamp.toLowerCase()}`;
+  const projectKey = config.validationProjectKey;
 
   if (!projectKey) {
     throw new Error(
-      "Missing JIRA_TEST_PROJECT_KEY. Refusing to run live tests in the default development project."
+      "Missing JIRA_VALIDATION_PROJECT_KEY. Refusing to run validation writes in the default delivery project."
     );
   }
   const results: StepResult[] = [];
@@ -38,10 +38,10 @@ async function main(): Promise<void> {
   const parent = await jiraApi.createIssue({
     projectKey,
     issueType: "Task",
-    summary: `[Codex Live Test] Parent ${timestamp}`,
+    summary: `[Validation] Parent ${timestamp}`,
     description:
-      "Automatically created live test issue. Safe to keep or delete.",
-    labels: [label, "codex-live-test"]
+      "Automatically created validation issue. Safe to keep or delete.",
+    labels: [label, "validation-smoke"]
   });
   results.push({
     step: "create parent issue",
@@ -54,10 +54,10 @@ async function main(): Promise<void> {
   const child = await jiraApi.createIssue({
     projectKey,
     issueType: "Task",
-    summary: `[Codex Live Test] Child ${timestamp}`,
+    summary: `[Validation] Child ${timestamp}`,
     description:
-      "Automatically created live test issue. Safe to keep or delete.",
-    labels: [label, "codex-live-test"]
+      "Automatically created validation issue. Safe to keep or delete.",
+    labels: [label, "validation-smoke"]
   });
   results.push({
     step: "create child issue",
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
   await jiraApi.updateIssue({
     issueKey: parent.key,
     fields: {
-      summary: `[Codex Live Test] Parent ${timestamp} (updated)`,
+      summary: `[Validation] Parent ${timestamp} (updated)`,
       description: {
         type: "doc",
         version: 1,
@@ -130,7 +130,7 @@ async function main(): Promise<void> {
     linkTypes.issueLinkTypes?.[0];
 
   if (!preferredLink?.name) {
-    throw new Error("No issue link type available for live test.");
+    throw new Error("No issue link type available for validation.");
   }
 
   await jiraApi.linkIssues({
@@ -179,7 +179,7 @@ async function main(): Promise<void> {
     fields: ["summary", "status", "priority", "issuelinks"]
   });
   results.push({
-    step: "search live test issues",
+    step: "search validation issues",
     ok: true,
     details: {
       count: search.issues.length
@@ -221,7 +221,7 @@ async function main(): Promise<void> {
     "utf8"
   );
 
-  console.log(`Live test OK. Report written to ${reportPath}`);
+  console.log(`Validation flow OK. Report written to ${reportPath}`);
   console.log(`Created issues: ${parent.key}, ${child.key}`);
   console.log(`Transition used: ${preferredTransition.name}`);
   console.log(`Pick-next candidate: ${pickCandidate?.key ?? "none"}`);

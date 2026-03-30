@@ -2,48 +2,48 @@
 
 ## Purpose
 
-A Jira asszisztensnek nem eleg issue-kat letrehozni es statuszt valtani. A projekt valos iranyitasahoz ertelmeznie kell, hogy melyik munka mit blokkol, min akad el, es melyik kovetkezo tetel indithato tenylegesen.
+A useful Jira assistant must understand more than issue CRUD. It has to know what is blocked, what is safe to start next, and how dependency changes affect delivery order.
 
-Ez a reteg a Jira `Blocks` kapcsolataira epitett dependency control operating modelt rogzit.
+This module defines a dependency-control operating model built around Jira issue links, especially the `Blocks` relationship.
 
 ## Core Rules
 
-- A blokkolasi logika elsodlegesen a Jira `Blocks` issue linktipusara epul.
-- Egy issue akkor `blocked`, ha van olyan bejovo blokkoloja, amely nincs done statuszkategoriaban.
-- Egy issue attol, hogy masokat blokkol, meg nem feltetlen blocked, de downstream kockazatot hordoz.
-- A `pick next issue` logika csak olyan issue-t ajanlhat, amely nincs done allapotban es nincs nyitott blokkoloja.
-- A dependency allapotot az asszisztensnek minden lifecycle muvelet elott ujra kell ertekelnie.
+- Blocking logic is primarily based on Jira `Blocks` links.
+- An issue is considered blocked when it has at least one inbound blocker that is not done.
+- An issue that blocks downstream work is not automatically blocked itself, but it does carry delivery risk.
+- `pick_next_issue` should only recommend work that is not done and has no open inbound blockers.
+- Dependency state must be re-evaluated before lifecycle-changing actions.
 
 ## Assistant Responsibilities
 
-### 1. Dependency Discovery
+### Dependency Discovery
 
-- olvassa ki az issue bejovo es kimeno blokkolasi kapcsolatait
-- kulonitse el az `blocked by` es `blocks` iranyokat
-- mutassa meg, melyik blokkolo nyitott meg
-- mutassa meg, ha az issue mas aktiv munkakat blokkol
+- read inbound and outbound blocking links
+- distinguish `blocked by` from `blocks`
+- show which blockers remain open
+- surface when an issue blocks active downstream work
 
-### 2. Dependency-Aware Execution
+### Dependency-Aware Execution
 
-- ne inditson el blokkolt issue-t
-- ne zarjon le olyan issue-t, amelynek blokkolasi allapota ellentmond a workflow policynek
-- a kovetkezo issue valasztasanal preferalja a tenylegesen indithato tetelt
-- a kivalasztasi indokban jelenjen meg a dependency helyzet
+- do not start blocked issues
+- do not close issues when dependency state contradicts workflow policy
+- prefer startable work during next-issue selection
+- include dependency context in issue-selection reasoning
 
-### 3. Dependency Maintenance
+### Dependency Maintenance
 
-- uj backlog seednel epitse fel a `Blocks` kapcsolatokat
-- scope-valtozasnal frissitse a dependency graphot
-- jelezze a stale vagy hianyzokapcsolatokat
-- dokumentalja, ha egy dependency torlese vagy atkotese termekdontes
+- build `Blocks` links during backlog seeding
+- update the dependency graph when scope changes
+- flag stale, missing, or duplicate dependency links
+- document dependency removals or relinks when they carry product impact
 
 ## Non-Goals
 
-Az elso szelet nem old meg teljes dependency schedulinget es nem probal Gantt-jellegu tervet generalni. A cel az, hogy a board igaz maradjon, es a delivery loop ne vegyen fel blokkolt munkat.
+The current dependency-control layer does not attempt full project scheduling or Gantt-style planning. Its purpose is to keep the board truthful and the execution loop safe.
 
-## Relationship To Other Modules
+## Relationship to Other Modules
 
-- `Workflow Governance`: a workflow policy donthet ugy, hogy blokkolo helyzetnel mas statusz kell
-- `Quality Control`: bug es failed test uj dependency-ket hozhat be
-- `Change Control`: CR es reopen muveletek dependency driftet okozhatnak
-- `Traceability and Audit`: a dependency mutacioknak is visszakereshetonek kell lenniuk
+- `Workflow Governance`: workflow policy may require a dedicated lifecycle response to blockers
+- `Quality Control`: failed tests and bugs can introduce new blockers
+- `Change Control`: reopened or changed work can create dependency drift
+- `Traceability and Audit`: dependency mutations should remain auditable

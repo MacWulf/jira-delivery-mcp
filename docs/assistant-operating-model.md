@@ -1,68 +1,67 @@
 # Jira Assistant Operating Model
 
-## Source of truth
+## Sources of Truth
 
-- A feladatok forrasa a Jira.
-- A kod es a kapcsolodo artefaktumok forrasa a repository.
-- A dokumentacios allapot forrasa elsokorben a repository, kesobb opcionalisan Confluence.
+- Jira is the source of truth for work state.
+- The repository is the source of truth for code and implementation artifacts.
+- Documentation lives in the repository first, with optional Confluence publishing when configured.
 
-## Environment separation
+## Environment Separation
 
-- A napi delivery munka menjen a fo projektben.
-- A kontrollalt validacios es irasi probak kulon sandbox vagy validacios projektben menjenek.
-- A technikai probak ne szemeteljek tele a fo delivery projektet, ha van dedikalt validacios projekt.
+- Daily delivery work should run against the main project.
+- Controlled validation writes should run in a dedicated validation project when available.
+- Validation utilities should not pollute the primary delivery backlog.
 
-## Core loop
+## Core Loop
 
-1. Az asszisztens beolvassa a projektet vagy az aktualis briefet.
-2. Ellenorzi a projektet, az issue struktutat es a nyitott dependency-ket.
-3. Ha hianyzik bontas, letrehoz epic, story, task vagy sub-task szerkezetet.
-4. Linkeli a dependency-ket explicit Jira issue linkekkel.
-5. Kivalasztja a kovetkezo nem blokkolt, nem lezart issue-t.
-6. Lekeri a valid transitionoket, majd elinditja a munkat.
-7. Munka kozben kommentel, worklogol es dokumental.
-8. Munka vegen a ticketet megfelelo allapotba mozgatja.
-9. Ujra kivalasztja a kovetkezo relevans issue-t.
+1. Read the current project or brief.
+2. Inspect project structure, dependencies, and workflow state.
+3. Create or refine epics, stories, tasks, or subtasks when the backlog is incomplete.
+4. Link dependencies explicitly in Jira.
+5. Pick the next eligible issue.
+6. Resolve the valid Jira transitions before changing status.
+7. Comment, log work, and document meaningful decisions while executing.
+8. Move the issue to the correct lifecycle state.
+9. Re-evaluate the next eligible issue.
 
-## Required assistant behaviors
+## Required Behaviors
 
 ### Planning
 
-- Eloszor olvasson, utana irjon.
-- Ne gyartson ticketet duplikacio ellenorzes nelkul.
-- A nagyobb celokat bontsa kezelheto, egymasra epulo ticketekre.
-- Ha a ticket description tartalmaz skill metadata blokkot, azt a vegrehajtas elott oldja fel es hasznalja routing jelzesnek.
+- Read before writing.
+- Check for duplicates before creating new Jira items.
+- Break large goals into startable work items.
+- If an issue description contains execution metadata, resolve it before execution.
 
 ### Execution
 
-- Minden iras elott kerje le az aktualis issue allapotat.
-- Statuszvaltasnal ne feltetelezzen workflow-t; mindig a Jira transition listabol dolgozzon.
-- Blokkolt issue-t ne inditson el, csak jelezze vagy oldja a dependency-t.
-- `Selected` nelkul a `To Do` issue altalaban nem szamitson kovetkezo indithato munkanak, ha van mar elokeszitett `Selected` tetel.
-- `Blocked` statuszt csak explicit blockerrel es lehetoseg szerint `Blocks` linkkel egyutt hasznaljon.
-- A required skills metadata az issue vegrehajtasi kontraktus resze, nem puszta ajanlas.
+- Read the current issue state before every write.
+- Never assume the workflow; always use transitions that Jira exposes.
+- Do not start blocked work.
+- Prefer `Selected` work over raw backlog items when the project uses a ready queue.
+- Treat required skill metadata as part of the issue execution contract.
 
 ### Documentation
 
-- Minden fontos dontest vagy allapotvaltozast kommenttel vagy dokumentummal tamasszon ala.
-- A dokumentacio ne csak leiras legyen, hanem kovetheto dontesi nyom.
+- Record meaningful decisions and state changes with comments or structured documents.
+- Preserve short decision trails, not just status changes.
 
 ### Prioritization
 
-- Elonyben a nem blokkolt, magas prioritasu ticket.
-- Done kategoriaba eso issue ne legyen ujra kivalasztva.
-- Ha nincs feldolgozhato issue, azt kulon allapotkent jelezze.
+- Prefer unblocked, high-priority work.
+- Do not re-select completed issues.
+- When no eligible work exists, report that state explicitly.
 
-## Safety model
+## Safety Model
 
-- Az iro muveletek alapbol `dry-run` modban futnak.
-- Live modban `confirm=true` kell az irashoz.
-- A tenant-specifikus workflow-kat nem szabad beegetett feltetelezesekkel kezelni.
-- A kontrollalt validacios futasok kulon sandbox projektet hasznaljanak, ha ilyen rendelkezésre all.
+- Write operations default to `dry-run`.
+- Live writes require explicit confirmation.
+- Workflow assumptions must be discovered from the target project, not hardcoded into execution.
+- Controlled validation runs should use a dedicated validation project whenever one exists.
 
-## Practical tool sequence
+## Typical Tool Sequences
 
-### New project setup
+### Project Setup
 
 - `list_projects`
 - `get_project`
@@ -72,7 +71,7 @@
 - `create_issue`
 - `link_issues`
 
-### Starting work on the next item
+### Start the Next Item
 
 - `pick_next_issue`
 - `get_issue`
@@ -80,25 +79,24 @@
 - `select_issue_for_work`
 - `start_issue_work`
 
-### During execution
+### During Execution
 
 - `update_issue`
 - `add_comment`
 - `add_worklog`
 - `create_doc_page`
 
-### Closing or handing off
+### Handoff or Close
 
 - `handoff_issue`
 - `send_issue_to_qa`
 - `mark_issue_blocked`
 - `close_issue_if_ready`
-- `add_comment`
 
-## Next maturity steps
+## Next Maturity Steps
 
 - [Capability map](./capability-map.md)
-- project-specific policy config
-- approval gate workflow-admin es migration jellegu lepesekhez
-- automatikus duplicate detection
+- project-specific policy configuration
+- approval gates for workflow administration and migrations
+- duplicate detection
 - richer backlog health checks

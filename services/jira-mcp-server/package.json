@@ -1,7 +1,8 @@
 {
-  "name": "@jira-integration/jira-mcp-server",
+  "name": "@jira-delivery-mcp/jira-mcp-server",
   "version": "0.1.0",
   "private": true,
+  "description": "Local Jira MCP server for Jira Delivery MCP.",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -9,13 +10,13 @@
     "check": "tsc --noEmit -p tsconfig.json",
     "dev": "tsx src/index.ts",
     "smoke": "tsx src/smoke.ts",
-    "live-test": "tsx src/live-test.ts --confirm-live",
-    "skill-metadata-live-test": "tsx src/skill-metadata-live-test.ts --confirm-live",
-    "skill-metadata-demo-live-test": "tsx src/skill-metadata-demo-live-test.ts --confirm-live",
-    "capability-roadmap-live-seed": "tsx src/capability-roadmap-live-seed.ts --confirm-live",
-    "dependency-control-live-test": "tsx src/dependency-control-live-test.ts",
-    "dependency-drift-live-test": "tsx src/dependency-drift-live-test.ts",
-    "workflow-admin-live-apply": "tsx src/workflow-admin-live-apply.ts --confirm-live"
+    "validate:live": "tsx src/live-test.ts --confirm-live",
+    "validate:skill-metadata": "tsx src/skill-metadata-live-test.ts --confirm-live",
+    "validate:skill-metadata-demo": "tsx src/skill-metadata-demo-live-test.ts --confirm-live",
+    "seed:sample-roadmap": "tsx src/capability-roadmap-live-seed.ts --confirm-live",
+    "validate:dependencies": "tsx src/dependency-control-live-test.ts",
+    "validate:dependency-drift": "tsx src/dependency-drift-live-test.ts",
+    "validate:workflow-apply": "tsx src/workflow-admin-live-apply.ts --confirm-live"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.28.0",

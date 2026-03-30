@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Core"
+  short_description: "Tenant-aware Jira operating model"
+  default_prompt: "Use -core to decide how Jira work should be classified, seeded, and executed safely."

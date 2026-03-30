@@ -24,11 +24,11 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const jiraApi = new JiraApi(config);
   const assistantService = new JiraAssistantService(jiraApi, config);
-  const projectKey = config.testProjectKey;
+  const projectKey = config.validationProjectKey;
 
   if (!projectKey) {
     throw new Error(
-      "Missing JIRA_TEST_PROJECT_KEY. Refusing to run skill metadata live test outside the dedicated test project."
+      "Missing JIRA_VALIDATION_PROJECT_KEY. Refusing to run skill metadata validation outside the dedicated validation project."
     );
   }
 
@@ -37,12 +37,12 @@ async function main(): Promise<void> {
   const results: StepResult[] = [];
 
   const description = buildIssueDescriptionWithExecutionMetadata(
-    "Skill metadata live test issue.",
+    "Skill metadata validation issue.",
     {
       requiredSkills: ["jira-core", "jira-execution-loop"],
       optionalSkills: ["build-web-apps:frontend-skill"],
       executionMode: "implement",
-      notes: ["Created by the dedicated skill metadata live test."]
+      notes: ["Created by the dedicated skill metadata validation flow."]
     }
   );
 
@@ -55,8 +55,8 @@ async function main(): Promise<void> {
   } = {
     projectKey,
     issueType: "Task",
-    summary: `[Codex Skill Metadata Test] ${timestamp}`,
-    labels: [label, "codex-skill-metadata-test"]
+    summary: `[Validation] Skill metadata ${timestamp}`,
+    labels: [label, "skill-metadata-validation"]
   };
 
   if (description) {
@@ -114,14 +114,14 @@ async function main(): Promise<void> {
       requiredSkills: ["jira-core", "jira-project-bootstrap"],
       optionalSkills: ["jira-intake-refinement"],
       executionMode: "review",
-      notes: ["Updated by the dedicated skill metadata live test."]
+      notes: ["Updated by the dedicated skill metadata validation flow."]
     }
   );
 
   await jiraApi.updateIssue({
     issueKey: issue.key,
     fields: {
-      description: textToAdf(updatedDescription ?? "Skill metadata live test issue.")
+      description: textToAdf(updatedDescription ?? "Skill metadata validation issue.")
     }
   });
   results.push({
@@ -175,7 +175,7 @@ async function main(): Promise<void> {
     "utf8"
   );
 
-  console.log(`Skill metadata live test OK. Report written to ${reportPath}`);
+  console.log(`Skill metadata validation OK. Report written to ${reportPath}`);
   console.log(`Created issue: ${issue.key}`);
 }
 

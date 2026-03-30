@@ -1,20 +1,23 @@
 {
-  "name": "jira-integration",
+  "name": "jira-delivery-mcp",
   "version": "0.1.0",
   "private": true,
+  "description": "Jira delivery toolkit with an MCP server, policy modules, and optional Codex skills.",
   "workspaces": [
     "services/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace @jira-integration/jira-mcp-server",
-    "check": "npm run check --workspace @jira-integration/jira-mcp-server",
-    "dev": "npm run dev --workspace @jira-integration/jira-mcp-server",
-    "smoke": "npm run smoke --workspace @jira-integration/jira-mcp-server",
-    "live-test": "npm run live-test --workspace @jira-integration/jira-mcp-server",
-    "skill-metadata-live-test": "npm run skill-metadata-live-test --workspace @jira-integration/jira-mcp-server",
-    "skill-metadata-demo-live-test": "npm run skill-metadata-demo-live-test --workspace @jira-integration/jira-mcp-server",
-    "capability-roadmap-live-seed": "npm run capability-roadmap-live-seed --workspace @jira-integration/jira-mcp-server",
-    "workflow-admin-live-apply": "npm run workflow-admin-live-apply --workspace @jira-integration/jira-mcp-server"
+    "build": "npm run build --workspace @jira-delivery-mcp/jira-mcp-server",
+    "check": "npm run check --workspace @jira-delivery-mcp/jira-mcp-server",
+    "dev": "npm run dev --workspace @jira-delivery-mcp/jira-mcp-server",
+    "smoke": "npm run smoke --workspace @jira-delivery-mcp/jira-mcp-server",
+    "validate:live": "npm run validate:live --workspace @jira-delivery-mcp/jira-mcp-server",
+    "validate:skill-metadata": "npm run validate:skill-metadata --workspace @jira-delivery-mcp/jira-mcp-server",
+    "validate:skill-metadata-demo": "npm run validate:skill-metadata-demo --workspace @jira-delivery-mcp/jira-mcp-server",
+    "validate:dependencies": "npm run validate:dependencies --workspace @jira-delivery-mcp/jira-mcp-server",
+    "validate:dependency-drift": "npm run validate:dependency-drift --workspace @jira-delivery-mcp/jira-mcp-server",
+    "seed:sample-roadmap": "npm run seed:sample-roadmap --workspace @jira-delivery-mcp/jira-mcp-server",
+    "validate:workflow-apply": "npm run validate:workflow-apply --workspace @jira-delivery-mcp/jira-mcp-server"
   },
   "engines": {
     "node": ">=24.0.0"

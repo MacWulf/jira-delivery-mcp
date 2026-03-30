@@ -1,53 +1,53 @@
 # Secret Storage
 
-## Cel
+## Goal
 
-Az API tokenek ne plain text formaban legyenek a helyi `.env` fajlban.
+API tokens should not live in plain text inside a local `.env` file unless there is no better option.
 
-## Tamasztott modok
+## Supported Modes
 
-### Plain text env
+### Plain Environment Variables
 
 - `JIRA_API_TOKEN`
 - `CONFLUENCE_API_TOKEN`
 
-Ez a visszafele kompatibilitas miatt tamogatott, de helyi gepen nem ez az ajanlott vegallapot.
+This remains supported for compatibility, but it is not the preferred local setup when stronger platform-native options are available.
 
-### Windows DPAPI fajl
+### Windows DPAPI-Protected Files
 
 - `JIRA_API_TOKEN_DPAPI_FILE`
 - `CONFLUENCE_API_TOKEN_DPAPI_FILE`
 
-Ebben a modban a token egy, a jelenlegi Windows userhez kotott, DPAPI-val vedett fajlban van.
+In this mode the token is stored in a DPAPI-protected file bound to the current Windows user.
 
-## Ajanlott helyi beallitas
+## Recommended Local Setup on Windows
 
-1. Hozd letre a titkos fajlt:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\store-dpapi-secret.ps1 -Path "$env:APPDATA\Codex\secrets\jira-api-token.dpapi" -Prompt "Jira API token"
-```
-
-Ha a secure promptban a beillesztes nem megbizhato, hasznald inkabb a vagolapos modot:
+1. Create a protected secret file:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\store-dpapi-secret.ps1 -Path "$env:APPDATA\Codex\secrets\jira-api-token.dpapi" -FromClipboard
+powershell -ExecutionPolicy Bypass -File .\scripts\store-dpapi-secret.ps1 -Path "$env:APPDATA\JiraDeliveryMcp\secrets\jira-api-token.dpapi" -Prompt "Jira API token"
 ```
 
-2. Az `.env` fajlban allitsd be:
+If secure-prompt paste behavior is unreliable, use the clipboard mode instead:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\store-dpapi-secret.ps1 -Path "$env:APPDATA\JiraDeliveryMcp\secrets\jira-api-token.dpapi" -FromClipboard
+```
+
+2. Configure `.env`:
 
 ```dotenv
-JIRA_API_TOKEN_DPAPI_FILE=%APPDATA%\Codex\secrets\jira-api-token.dpapi
+JIRA_API_TOKEN_DPAPI_FILE=%APPDATA%\JiraDeliveryMcp\secrets\jira-api-token.dpapi
 ```
 
-3. Torold a `JIRA_API_TOKEN=` sort az `.env`-bol.
+3. Remove `JIRA_API_TOKEN=` from `.env` if it is present.
 
-## Mukodes
+## Behavior
 
-- Ha a plain text env es a DPAPI fajl egyszerre van megadva, a DPAPI fajl elvez elsobbseget.
-- A Jira token fallbackkent Confluence tokenkent is hasznalhato, ha kulon Confluence secret nincs megadva.
-- A DPAPI secretet ugyanaz a Windows user tudja visszafejteni, aki letrehozta.
+- If both a plain environment variable and a DPAPI file are configured, the DPAPI file takes precedence.
+- The Jira token can serve as a fallback Confluence token when no separate Confluence secret is configured.
+- The DPAPI secret can only be decrypted by the same Windows user who created it.
 
-## Uzemi megjegyzes
+## Operational Note
 
-- Ha egy token valaha nem vedett modon volt tarolva vagy megosztva, erdemes rotalni, es az uj tokent mar kozvetlenul DPAPI fajlba menteni.
+If a token was ever stored or shared without protection, rotate it and re-store the replacement in a protected secret file.

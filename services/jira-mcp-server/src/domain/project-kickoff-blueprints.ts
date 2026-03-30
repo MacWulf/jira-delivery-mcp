@@ -31,20 +31,20 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
   return {
     key: "codex-jira-assistant-mvp",
     name: "Codex Jira Assistant MVP",
-    labels: ["codex-managed", "jira-integration", "product-backlog"],
+    labels: ["codex-managed", "jira-delivery-mcp", "product-backlog"],
     items: [
       {
         id: "epic-bootstrap",
         issueType: "Epic",
         labels: ["epic"],
-        summary: "Projekt bootstrap es kickoff automatizalas",
+        summary: "Project bootstrap and kickoff automation",
         description: [
-          "Cel: a jovobeli Codex-projektek inditasa kontrollalt Jira bootstrapon keresztul tortenjen.",
+          "Goal: future assistant-led projects should start through a controlled Jira bootstrap flow.",
           "",
-          "Elvart eredmeny:",
+          "Expected outcome:",
           "- bootstrap input contract",
-          "- projektletrehozas es template-valasztas",
-          "- kickoff checklist es kezdeti artifact seed"
+          "- project creation and template selection",
+          "- kickoff checklist and initial artifact seeding"
         ].join("\n")
       },
       {
@@ -53,14 +53,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         parentId: "epic-bootstrap",
         labels: ["story"],
         startWork: true,
-        summary: "Bootstrap input contract es project brief schema definialasa",
+        summary: "Define the bootstrap input contract and project brief schema",
         description: [
-          "PO szemszogbol a projektinditas csak akkor automatizalhato biztonsagosan, ha a brief strukturalt es ellenorizheto.",
+          "From a product-owner perspective, project kickoff is only safe to automate when the brief is structured and verifiable.",
           "",
           "Acceptance criteria:",
-          "- a kickoff brief kotelezo es opcionlis mezoit formalisan definialjuk",
-          "- a schema tartalmazza a projektcel, scope, delivery model, ownership es definition of done elemeket",
-          "- ervenytelen input eseten a rendszer egyertelmu hibakat ad vissza"
+          "- the kickoff brief has formally defined required and optional fields",
+          "- the schema covers goal, scope, delivery model, ownership, and definition of done",
+          "- invalid input returns clear errors"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-project-bootstrap"],
@@ -73,14 +73,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-bootstrap",
         labels: ["story"],
-        summary: "Jira projekt letrehozasi es template-valasztasi folyamat veglegesitese",
+        summary: "Finalize project creation and template-selection flow",
         description: [
-          "A projekt bootstrapnak professzionalis modon kell dontenie a megfelelo Jira projekt-tipusrol es template-rol.",
+          "Project bootstrap should make an intentional decision about project type and template selection.",
           "",
           "Acceptance criteria:",
-          "- a kickoff brief alapjan eldontjuk a software/business/service desk iranyt",
-          "- a management model es delivery model valasztasa dokumentalt",
-          "- a bootstrap eredmenye audit-olhato"
+          "- the kickoff brief drives the software, business, or service-desk choice",
+          "- the management model and delivery model selection are documented",
+          "- bootstrap output is auditable"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-project-bootstrap"],
@@ -93,14 +93,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-bootstrap",
         labels: ["story"],
-        summary: "Kickoff checklist es kezdeti projekt artifactok seedelese",
+        summary: "Seed kickoff checklist and initial project artifacts",
         description: [
-          "A projektinditasnak nem csak projektet kell letrehoznia, hanem a kezdeti operacios artefaktumokat is.",
+          "Kickoff should create not only the project shell, but also the minimum operational artifacts needed to start safely.",
           "",
           "Acceptance criteria:",
-          "- kickoff checklist jegyek letrejonnek",
-          "- ownership es default operacios elemek rogzitettek",
-          "- a kezdeti seed nem hagy ki kritikus indito lepeseket"
+          "- kickoff checklist items are created",
+          "- ownership and default operating elements are recorded",
+          "- the initial seed does not skip critical setup steps"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-project-bootstrap"],
@@ -111,14 +111,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         id: "epic-backlog",
         issueType: "Epic",
         labels: ["epic"],
-        summary: "Backlog generalas es dependency modellezes",
+        summary: "Backlog generation and dependency modeling",
         description: [
-          "Cel: a projekt briefbol valodi, dolgozhato delivery backlog alljon elo, nem csak elszigetelt issue-k.",
+          "Goal: turn the project brief into a workable delivery backlog, not a flat list of disconnected issues.",
           "",
-          "Elvart eredmeny:",
-          "- epic/story/task generalas",
+          "Expected outcome:",
+          "- epic, story, and task generation",
           "- explicit dependency graph",
-          "- idempotens ujrafutas"
+          "- idempotent re-run behavior"
         ].join("\n")
       },
       {
@@ -126,14 +126,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-backlog",
         labels: ["story"],
-        summary: "Briefbol epicek, storyk es taskok generalasa",
+        summary: "Generate epics, stories, and tasks from the brief",
         description: [
-          "A briefnek automatikusan backlogga kell alakulnia, hogy a projekt a kickoff utan azonnal munkakepes legyen.",
+          "The brief should become a usable backlog so the project can start delivery immediately after kickoff.",
           "",
           "Acceptance criteria:",
-          "- a briefbol epicek, storyk es taskok jonnek letre",
-          "- a jegyek leirasa tartalmazza a szandekot es a feldolgozasi kontextust",
-          "- a backlog megfelel a PO altal elvart szeletezesnek"
+          "- the brief produces epics, stories, and tasks",
+          "- issue descriptions include intent and execution context",
+          "- the backlog respects the expected product-owner slicing"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: [
@@ -149,14 +149,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-backlog",
         labels: ["story"],
-        summary: "Dependency graph es blocks link kezeles bevezetese",
+        summary: "Introduce dependency graph and `Blocks` link handling",
         description: [
-          "A delivery sorrendhez explicit dependency model kell, kulonben az asszisztens rossz sorrendben kezdhet dolgozni.",
+          "Delivery sequencing needs an explicit dependency model; otherwise the assistant may start work in the wrong order.",
           "",
           "Acceptance criteria:",
-          "- a blokkolasi logika `Blocks` issue linkeken alapul",
-          "- a rendszer el tudja kuloniteni a startolhato es blokkolt munkat",
-          "- a dependency-k ujrageneralasa nem okoz kaoszt"
+          "- blocking logic is based on Jira `Blocks` links",
+          "- the system can distinguish startable work from blocked work",
+          "- dependency regeneration does not create chaos"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-project-bootstrap"],
@@ -169,14 +169,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-backlog",
         labels: ["story"],
-        summary: "Idempotens ujrafutas es duplicate vedelem",
+        summary: "Support idempotent reruns and duplicate protection",
         description: [
-          "A kickoff es backlog seed csak akkor uzemszeru, ha tobbszor is futtathato duplikaciok nelkul.",
+          "Kickoff and backlog seeding are only operationally safe if they can be rerun without duplicating work.",
           "",
           "Acceptance criteria:",
-          "- ugyanazon projekt seed ujrafutasa nem gyart ujra mindent",
-          "- a duplikalt issue-k es dependency-k felismerhetok",
-          "- a seed eredmenye transzparens riporttal zarul"
+          "- rerunning the same seed does not recreate everything",
+          "- duplicate issues and dependencies can be detected",
+          "- seed output ends with a transparent report"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-project-bootstrap"],
@@ -187,14 +187,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         id: "epic-execution",
         issueType: "Epic",
         labels: ["epic"],
-        summary: "Vegrehajtasi orchestrator es issue lifecycle",
+        summary: "Execution orchestrator and issue lifecycle",
         description: [
-          "Cel: a backlog seed utan az asszisztens tenylegesen tudja vezetni a munkat Jira-ban.",
+          "Goal: after backlog seeding, the assistant should be able to drive work forward in Jira.",
           "",
-          "Elvart eredmeny:",
-          "- kovetkezo issue valasztas",
-          "- statusz es komment orchestration",
-          "- readiness alapu handoff es done"
+          "Expected outcome:",
+          "- next-issue selection",
+          "- status and comment orchestration",
+          "- readiness-based handoff and completion"
         ].join("\n")
       },
       {
@@ -202,14 +202,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-execution",
         labels: ["story"],
-        summary: "Kovetkezo nem blokkolt issue kivalasztasa",
+        summary: "Select the next unblocked issue",
         description: [
-          "A Codexnek a backlogbol a kovetkezo helyes munkat kell felvennie.",
+          "The assistant should pull the correct next issue from the backlog.",
           "",
           "Acceptance criteria:",
-          "- a done es blokkolt issue-k nem kerulnek kivalsztasra",
-          "- a prioritasi szabalyok konfiguralhatok",
-          "- a valasztas indoklasa visszaadhato"
+          "- completed and blocked issues are excluded from selection",
+          "- prioritization rules are configurable",
+          "- the selection rationale can be returned to the operator"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-execution-loop"],
@@ -221,14 +221,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-execution",
         labels: ["story"],
-        summary: "Munkainditas, komment, worklog es statuszlepes orchestralasa",
+        summary: "Orchestrate start, comments, worklog, and status transitions",
         description: [
-          "A valodi delivery loophoz az issue allapotat es a kiserofolyamatokat is kezelni kell.",
+          "The real delivery loop needs to manage issue state as well as supporting execution signals.",
           "",
           "Acceptance criteria:",
-          "- a rendszer el tudja inditani a munkat a megfelelo transitionnel",
-          "- komment es worklog automatikusan rogzitheto",
-          "- a statuszlepesek projektpolitika szerint mennek"
+          "- the system can start work using the correct transition",
+          "- comments and worklogs can be recorded automatically when appropriate",
+          "- lifecycle transitions respect project policy"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-execution-loop"],
@@ -241,14 +241,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-execution",
         labels: ["story"],
-        summary: "Readiness alapu handoff es done logika",
+        summary: "Readiness-based handoff and completion logic",
         description: [
-          "A done allapotot nem szabad pusztan mechanikusan allitani.",
+          "The assistant should not set `Done` mechanically.",
           "",
           "Acceptance criteria:",
-          "- review, teszt es dokumentacios checklist tamogatott",
-          "- a done transition elott readiness check fut",
-          "- a handoff es close viselkedese audit-olhato"
+          "- review, test, and documentation checklists are supported",
+          "- a readiness check runs before the done transition",
+          "- handoff and close behavior are auditable"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: [
@@ -263,14 +263,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         id: "epic-governance",
         issueType: "Epic",
         labels: ["epic"],
-        summary: "Governance, workflow policy es dokumentacios reteg",
+        summary: "Governance, workflow policy, and documentation",
         description: [
-          "Cel: a rendszer ne csak mukodjon, hanem uzemszeru legyen tobb jovobeli Codex-projekthez is.",
+          "Goal: the system should not only work, but also stay operable across future Codex-assisted projects.",
           "",
-          "Elvart eredmeny:",
+          "Expected outcome:",
           "- workflow policy map",
-          "- approval es audit gate",
-          "- kickoff dokumentacio"
+          "- approval and audit gate",
+          "- kickoff documentation"
         ].join("\n")
       },
       {
@@ -278,14 +278,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-governance",
         labels: ["story"],
-        summary: "Project-specifikus workflow es status policy reteg",
+        summary: "Project-specific workflow and status policy layer",
         description: [
-          "A rendszernek tanulnia kell a projekt workflowjat, nem beleegetett allapotokra tamaszkodnia.",
+          "The system should learn the project workflow instead of depending on hardcoded lifecycle assumptions.",
           "",
           "Acceptance criteria:",
-          "- a workflow es transition policy projekt-szinten modellezett",
-          "- team-managed es egyedi workflow-k kulonbsege kezelheto",
-          "- a delivery loop csak ervenyes transitionoket hasznal"
+          "- workflow and transition policy are modeled at project scope",
+          "- different Jira project models can be handled cleanly",
+          "- the delivery loop uses only valid transitions"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-workflow-admin"],
@@ -298,14 +298,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-governance",
         labels: ["story"],
-        summary: "Approval gate es audit trail kritikus muveletekre",
+        summary: "Approval gates and audit trail for critical operations",
         description: [
-          "A nagy hatasu muveleteket kontrollaltan kell futtatni.",
+          "High-impact operations need controlled execution.",
           "",
           "Acceptance criteria:",
-          "- a kritikus irasok es workflow-muveletek audit trailt kapnak",
-          "- a rizikos muveletek approval gate-re tehetok",
-          "- a naplozas utolag visszakovetheto"
+          "- critical writes and workflow changes produce an audit trail",
+          "- risky operations can be placed behind an approval gate",
+          "- logs remain reviewable afterward"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core"],
@@ -318,14 +318,14 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         issueType: "Story",
         parentId: "epic-governance",
         labels: ["story"],
-        summary: "Kickoff dokumentacio es Confluence szinkron",
+        summary: "Kickoff documentation and optional Confluence synchronization",
         description: [
-          "A projektinditas eredmenyet emberileg is olvashato modon dokumentalni kell.",
+          "The outcome of project kickoff should be documented in a human-readable way.",
           "",
           "Acceptance criteria:",
-          "- kickoff dokumentacio legeneralhato",
-          "- a repo es Confluence kozotti szerepkor tiszta",
-          "- a projektinditas eredmenye utolag is ertelmezheto"
+          "- kickoff documentation can be generated",
+          "- the role split between repository and Confluence is clear",
+          "- the result of kickoff is understandable later"
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core"],

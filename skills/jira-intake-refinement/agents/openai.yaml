@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Intake"
+  short_description: "Classify, refine, and gate backlog work"
+  default_prompt: "Use -intake-refinement to classify Jira work items and enforce backlog readiness before execution."

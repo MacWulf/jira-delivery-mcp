@@ -1,41 +1,41 @@
-# Projekt brief sablon
+# Project Brief Template
 
-## Alapadatok
+## Basics
 
-- Projekt neve:
-- Projekt kulcs:
-- Projekt tipus: `software`
-- Jira mod: `team-managed`
-- Delivery mode: `kanban`
+- Project name:
+- Project key:
+- Project type: `software`
+- Management model: `team-managed` or `company-managed`
+- Delivery mode: `kanban` or `scrum`
 
-## Cel
+## Goal
 
-- Mit akarunk elerni?
-- Ki a celhasznalo vagy erintett?
-- Milyen problemat oldunk meg?
+- What are we trying to achieve?
+- Who is the target user or stakeholder?
+- What problem are we solving?
 
-## Elso release
+## First Release
 
-- Mi legyen az elso hasznalhato slice?
-- Mi nem fer bele az elso korbe?
-- Mi a siker definicioja?
+- What is the first usable slice?
+- What is explicitly out of scope for the first release?
+- How will we define success?
 
-## Korlatozasok
+## Constraints
 
 - Deadline:
-- Fuggosegek:
-- Integraciok:
-- Technikai vagy uzleti korlatok:
+- Dependencies:
+- Integrations:
+- Technical or business constraints:
 
-## Kezdo Jira struktura
+## Initial Jira Structure
 
-- Epic-ek:
-- Elsodleges story-k:
-- Szukseges taskok:
-- Ismert bugok vagy migracios kockazatok:
+- Epics:
+- Primary stories:
+- Required tasks:
+- Known bugs, risks, or migrations:
 
-## Elfogadasi elvek
+## Acceptance Approach
 
-- Mi szamit kesznek?
-- Milyen dokumentacio kell?
-- Milyen dependency-ket kell explicit rogziteni?
+- What counts as done?
+- What documentation is required?
+- Which dependencies must be tracked explicitly?

@@ -8,6 +8,7 @@ const envSchema = z.object({
   JIRA_API_TOKEN: z.string().min(1).optional(),
   JIRA_API_TOKEN_DPAPI_FILE: z.string().min(1).optional(),
   JIRA_DEFAULT_PROJECT_KEY: z.string().min(1).optional(),
+  JIRA_VALIDATION_PROJECT_KEY: z.string().min(1).optional(),
   JIRA_TEST_PROJECT_KEY: z.string().min(1).optional(),
   JIRA_DEFAULT_PICK_NEXT_JQL: z.string().min(1).optional(),
   JIRA_EXECUTION_MODE: z.enum(["dry-run", "live"]).default("dry-run"),
@@ -31,7 +32,7 @@ export type AppConfig = {
   executionMode: "dry-run" | "live";
   requireConfirmation: boolean;
   defaultProjectKey?: string;
-  testProjectKey?: string;
+  validationProjectKey?: string;
   defaultPickNextJql?: string;
   selectedTransitionNames: string[];
   inProgressTransitionNames: string[];
@@ -104,8 +105,11 @@ export function loadConfig(): AppConfig {
     config.defaultProjectKey = env.JIRA_DEFAULT_PROJECT_KEY;
   }
 
-  if (env.JIRA_TEST_PROJECT_KEY) {
-    config.testProjectKey = env.JIRA_TEST_PROJECT_KEY;
+  const validationProjectKey =
+    env.JIRA_VALIDATION_PROJECT_KEY ?? env.JIRA_TEST_PROJECT_KEY;
+
+  if (validationProjectKey) {
+    config.validationProjectKey = validationProjectKey;
   }
 
   if (env.JIRA_DEFAULT_PICK_NEXT_JQL) {

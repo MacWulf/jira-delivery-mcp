@@ -26,11 +26,11 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const jiraApi = new JiraApi(config);
   const assistantService = new JiraAssistantService(jiraApi, config);
-  const projectKey = config.testProjectKey;
+  const projectKey = config.validationProjectKey;
 
   if (!projectKey) {
     throw new Error(
-      "Missing JIRA_TEST_PROJECT_KEY. Refusing to run demo backlog writes outside the dedicated test project."
+      "Missing JIRA_VALIDATION_PROJECT_KEY. Refusing to run demo backlog writes outside the dedicated validation project."
     );
   }
 
@@ -41,16 +41,16 @@ async function main(): Promise<void> {
   const epic = await jiraApi.createIssue({
     projectKey,
     issueType: "Epic",
-    summary: `[Codex Demo] Skill metadata driven execution ${timestamp}`,
+    summary: `[Validation Demo] Skill metadata driven execution ${timestamp}`,
     description: [
-      "Demo backlog for the Jira integration project.",
+      "Demonstration backlog for the Jira Delivery MCP project.",
       "",
       "Goal:",
-      "- create a small metadata-aware backlog in TEST",
+      "- create a small metadata-aware backlog in the validation project",
       "- resolve required skills from ticket descriptions",
       "- start the first eligible issue through the assistant flow"
     ].join("\n"),
-    labels: [label, "codex-demo", "skill-metadata"]
+    labels: [label, "validation-demo", "skill-metadata"]
   });
   results.push({
     step: "create epic",
@@ -121,9 +121,9 @@ async function main(): Promise<void> {
     {
       id: "task-validate",
       issueType: "Task",
-      summary: "Validate metadata roundtrip in TEST",
+      summary: "Validate metadata roundtrip in the validation project",
       description: [
-        "Run a controlled roundtrip in the TEST project to prove the metadata can be created, read, updated, and used for issue start planning.",
+        "Run a controlled roundtrip in the validation project to prove the metadata can be created, read, updated, and used for issue start planning.",
         "",
         "Acceptance criteria:",
         "- a test issue is created with execution metadata",
@@ -145,14 +145,14 @@ async function main(): Promise<void> {
     const issue = await jiraApi.createIssue({
       projectKey,
       issueType: definition.issueType,
-      summary: `[Codex Demo] ${definition.summary}`,
+      summary: `[Validation Demo] ${definition.summary}`,
       description:
         buildIssueDescriptionWithExecutionMetadata(
           definition.description,
           definition.executionMetadata
         ) ?? definition.description,
       parentIssueKey: epic.key,
-      labels: [label, "codex-demo", "skill-metadata"]
+      labels: [label, "validation-demo", "skill-metadata"]
     });
 
     issueKeysById[definition.id] = issue.key;

@@ -49,20 +49,20 @@ type StepResult = {
   details: Record<string, unknown>;
 };
 
-const LABELS = ["codex-managed", "capability-roadmap", "next-phase"];
+const LABELS = ["codex-managed", "sample-roadmap", "capability-seed"];
 
 const BLUEPRINTS: CapabilityBlueprint[] = [
   {
     id: "epic-workflow",
     issueType: "Epic",
-    summary: "Adaptive workflow governance es lifecycle policy",
+    summary: "Adaptive workflow governance",
     description: [
-      "Cel: a Jira asszisztens ne alap workflow feltetelezesekkel dolgozzon, hanem projektre szabott lifecycle policyval.",
+      "Goal: ensure the assistant works from discovered workflow behavior instead of hardcoded lifecycle assumptions.",
       "",
-      "Elvart eredmeny:",
-      "- workflow discovery es semantic map",
-      "- DoR es DoD policy retegek",
-      "- migration-safe workflow update folyamat"
+      "Expected outcome:",
+      "- workflow discovery and status semantics",
+      "- readiness and completion policy",
+      "- migration-safe workflow updates"
     ].join("\n"),
     labels: ["workflow", "governance"],
     executionMetadata: {
@@ -75,14 +75,14 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
     id: "story-workflow-discovery",
     issueType: "Story",
     parentId: "epic-workflow",
-    summary: "Aktiv workflow, statusz semantics es transition policy feltarasa",
+    summary: "Map workflow status semantics and transitions",
     description: [
-      "A rendszernek projektszinten fel kell ternie, hogy a workflow allapotok mit jelentenek, es mely transitionok ervenyesek a delivery kulonbozo fazisaiban.",
+      "Capture the project lifecycle in a structured way so execution can adapt to the actual workflow.",
       "",
       "Acceptance criteria:",
-      "- a projekt workflowja strukturalt semantic mapkent lekerdezheto",
-      "- a statuszokhoz business jelentest tudunk rendelni",
-      "- a team-managed es company-managed kulonbsegek elkulonulnek"
+      "- statuses are mapped to business meaning",
+      "- sampled transitions are available for execution policy",
+      "- workflow discovery remains tenant-aware"
     ].join("\n"),
     labels: ["workflow", "discovery"],
     executionMetadata: {
@@ -94,14 +94,14 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
     id: "story-readiness-policy",
     issueType: "Story",
     parentId: "epic-workflow",
-    summary: "Definition of Ready es Definition of Done policy reteg bevezetese",
+    summary: "Add Definition of Ready and Definition of Done policy",
     description: [
-      "A workflow onmagaban nem eleg. Kulon policy kell arra, hogy mikor startolhato es mikor zarhato egy issue.",
+      "Workflow alone is not enough. The assistant also needs explicit readiness and completion policy.",
       "",
       "Acceptance criteria:",
-      "- DoR es DoD szabalyok projektpolitika reszekent modellezettek",
-      "- a policy kulon kezeli a story, task, bug es test elemeket",
-      "- a delivery loop a policyt figyelembe veszi statuszvaltas elott"
+      "- readiness rules are modeled separately from workflow states",
+      "- completion rules are explicit for stories, tasks, and bugs",
+      "- lifecycle actions consult the policy before writing"
     ].join("\n"),
     labels: ["workflow", "readiness"],
     executionMetadata: {
@@ -111,36 +111,16 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
     }
   },
   {
-    id: "story-workflow-apply",
-    issueType: "Story",
-    parentId: "epic-workflow",
-    summary: "Workflow delta terv, migration logika es audit-safe alkalmazas",
-    description: [
-      "Ha a projekt workflowja mar nem megfelelo, a rendszernek kontrollaltan kell workflow delta tervet keszitenie es alkalmaznia.",
-      "",
-      "Acceptance criteria:",
-      "- workflow delta es migration terv keszul az aktualis projekthez",
-      "- a valtozas blast radiusa dokumentalt",
-      "- a nagy hatasu workflow muveletek audit trailt es approval lehetoseget kapnak"
-    ].join("\n"),
-    labels: ["workflow", "migration"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-workflow-admin"],
-      optionalSkills: ["jira-execution-loop"],
-      executionMode: "admin"
-    }
-  },
-  {
     id: "epic-quality",
     issueType: "Epic",
-    summary: "Quality control, teszt orchestration es bug evidence",
+    summary: "Quality control and bug evidence",
     description: [
-      "Cel: az acceptance criteria ne csak le legyen irva, hanem explicit tesztelesi es bugkezelesi reteggel legyen kikényszeritve.",
+      "Goal: acceptance criteria should drive explicit validation, bug handling, and evidence capture.",
       "",
-      "Elvart eredmeny:",
-      "- test taskok vagy test issue-k generalasa",
-      "- bug nyitas es evidence csatolas failed validation eseten",
-      "- retest loop es statuszvisszaallitas"
+      "Expected outcome:",
+      "- test work linked to delivery items",
+      "- bug creation when validation fails",
+      "- retest and status-correction loop"
     ].join("\n"),
     labels: ["quality", "testing"],
     executionMetadata: {
@@ -149,96 +129,17 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
     }
   },
   {
-    id: "epic-dependency",
-    issueType: "Epic",
-    summary: "Dependency control es graph-aware execution",
-    description: [
-      "Cel: a Jira asszisztens ne csak issue linkeket hozzon letre, hanem ertse is a blokkolasi es sorrendi kapcsolatokat a napi execution loopban.",
-      "",
-      "Elvart eredmeny:",
-      "- explicit dependency snapshot minden fontos issue-n",
-      "- dependency-aware next issue selection es blocker indoklas",
-      "- dependency maintenance scope-, bug- es tesztvaltozasoknal"
-    ].join("\n"),
-    labels: ["dependency", "execution"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-execution-loop"],
-      optionalSkills: ["jira-intake-refinement"],
-      executionMode: "implement"
-    }
-  },
-  {
-    id: "story-dependency-model",
-    issueType: "Story",
-    parentId: "epic-dependency",
-    summary: "Issue dependency graph normalizalasa es blokkolo szemantika",
-    description: [
-      "A rendszernek egyseges dependency snapshotot kell epitenie a Jira issue linkekbol, hogy a Blocks kapcsolat ne csak nyers link, hanem ertelmezett execution input legyen.",
-      "",
-      "Acceptance criteria:",
-      "- a rendszer elkuloniti a blocked by, blocks es egyeb kapcsolati tipusokat",
-      "- az issue olvasas dependency snapshotot is visszaad",
-      "- az open blokkolo issue-k kulon listazhatok"
-    ].join("\n"),
-    labels: ["dependency", "model"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-execution-loop"],
-      optionalSkills: ["jira-intake-refinement"],
-      executionMode: "implement"
-    }
-  },
-  {
-    id: "story-dependency-selection",
-    issueType: "Story",
-    parentId: "epic-dependency",
-    summary: "Dependency-aware next issue valasztas es blocker indoklas",
-    description: [
-      "A kovetkezo ticket kivalasztasanak nem csak priority-alapunak kell lennie: a rendszernek lathato modon indokolnia kell a blokkolt es az indithato issue-kat.",
-      "",
-      "Acceptance criteria:",
-      "- a next issue valasztas visszaadja a blokkolt jelolteket es a blokkolo issue-kat",
-      "- a kivalasztasi indoklas utal a dependency allapotra is",
-      "- blokkolt issue nem indulhat el rejtetten"
-    ].join("\n"),
-    labels: ["dependency", "selection"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-execution-loop"],
-      optionalSkills: ["jira-intake-refinement"],
-      executionMode: "implement"
-    }
-  },
-  {
-    id: "story-dependency-maintenance",
-    issueType: "Story",
-    parentId: "epic-dependency",
-    summary: "Dependency maintenance relink, split es reopen eseten",
-    description: [
-      "Ha a scope valtozik, bug jon letre, vagy egy work item splitelodik, a dependency halo is modosul. Ezt a rendszernek kontrollaltan kell kezelnie.",
-      "",
-      "Acceptance criteria:",
-      "- a rendszer dependency maintenance tervet tud kesziteni relink vagy reopen esetre",
-      "- az arvava valt vagy elavult dependency-k kiszurhetok",
-      "- a dependency-mutaciok audit traillel hajthatok vegre"
-    ].join("\n"),
-    labels: ["dependency", "maintenance"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-execution-loop", "jira-intake-refinement"],
-      optionalSkills: ["jira-workflow-admin"],
-      executionMode: "implement"
-    }
-  },
-  {
     id: "story-test-generation",
     issueType: "Story",
     parentId: "epic-quality",
-    summary: "Acceptance kriteriakbol test work itemek generalasa es linkelese",
+    summary: "Generate validation work from acceptance criteria",
     description: [
-      "A user storykhoz es taskokhoz a rendszernek explicit tesztmunkat kell rendelnie, hogy az acceptance criteria tenylegesen ellenorizheto legyen.",
+      "Stories and tasks should gain explicit validation work so acceptance criteria become testable.",
       "",
       "Acceptance criteria:",
-      "- a rendszer acceptance criteria alapjan test elemeket tud generalni",
-      "- a test work item linkelve van a parent storyhoz vagy taskhoz",
-      "- a quality reteget nem lehet kommentekkel helyettesiteni"
+      "- validation items can be derived from acceptance criteria",
+      "- validation work stays linked to the parent item",
+      "- validation requirements are not lost in free-form comments"
     ].join("\n"),
     labels: ["quality", "tests"],
     executionMetadata: {
@@ -251,15 +152,14 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
     id: "story-bug-evidence",
     issueType: "Story",
     parentId: "epic-quality",
-    summary: "Failed validation eseten bug nyitas, evidence csatolas es statuszkorrekcio",
+    summary: "Create bugs with evidence and linked parent impact",
     description: [
-      "Ha az acceptance criteria nem teljesul, a rendszernek bugot kell nyitnia, bizonyitekot kell rogzitenie, es az erintett issue allapotat korrigalnia kell.",
+      "When validation fails, the assistant should create a bug, link it back to the parent work item, and preserve evidence.",
       "",
       "Acceptance criteria:",
-      "- a failed tesztbol bug issue jon letre",
-      "- a bug visszalinkelodik az erintett parent issue-ra",
-      "- a hiba bizonyiteka strukturaltan rogzitheto",
-      "- az erintett issue allapota megfelelo statuszba kerul vissza"
+      "- failed validation creates a bug item",
+      "- the bug links back to the affected parent",
+      "- evidence is stored in a structured way"
     ].join("\n"),
     labels: ["quality", "bug"],
     executionMetadata: {
@@ -269,36 +169,75 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
     }
   },
   {
-    id: "story-retest-loop",
-    issueType: "Story",
-    parentId: "epic-quality",
-    summary: "Retest loop, acceptance verification es evidence-aware done logika",
+    id: "epic-dependency",
+    issueType: "Epic",
+    summary: "Dependency-aware delivery control",
     description: [
-      "A rendszernek tudnia kell, hogy egy javitott bug utan hogyan ellenorizzuk ujra az acceptance criterion teljesuleset, es mikor lehet tenylegesen Done egy issue.",
+      "Goal: let the assistant understand blockers and sequencing instead of only creating issue links.",
       "",
-      "Acceptance criteria:",
-      "- a retest loop kulon life cycle-kent modellezett",
-      "- a Done nem allithato evidence vagy verification nelkul",
-      "- a bugfixhez kapcsolodo parent issue ujra ellenorizheto"
+      "Expected outcome:",
+      "- dependency snapshots on important issues",
+      "- dependency-aware next-issue selection",
+      "- dependency maintenance when scope changes"
     ].join("\n"),
-    labels: ["quality", "retest"],
+    labels: ["dependency", "execution"],
     executionMetadata: {
       requiredSkills: ["jira-core", "jira-execution-loop"],
-      optionalSkills: ["jira-workflow-admin"],
+      optionalSkills: ["jira-intake-refinement"],
+      executionMode: "implement"
+    }
+  },
+  {
+    id: "story-dependency-model",
+    issueType: "Story",
+    parentId: "epic-dependency",
+    summary: "Normalize dependency snapshots from Jira links",
+    description: [
+      "Build a consistent dependency view from Jira issue links so blockers become reliable execution inputs.",
+      "",
+      "Acceptance criteria:",
+      "- `blocked by` and `blocks` directions are separated",
+      "- issue reads return a dependency snapshot",
+      "- open blockers are visible without manual inspection"
+    ].join("\n"),
+    labels: ["dependency", "model"],
+    executionMetadata: {
+      requiredSkills: ["jira-core", "jira-execution-loop"],
+      optionalSkills: ["jira-intake-refinement"],
+      executionMode: "implement"
+    }
+  },
+  {
+    id: "story-dependency-selection",
+    issueType: "Story",
+    parentId: "epic-dependency",
+    summary: "Explain next-issue selection using dependency state",
+    description: [
+      "Next-issue selection should return both eligible work and the reason blocked work was skipped.",
+      "",
+      "Acceptance criteria:",
+      "- blocked candidates and blocker keys are surfaced",
+      "- selection reasoning references dependency state",
+      "- blocked work cannot start silently"
+    ].join("\n"),
+    labels: ["dependency", "selection"],
+    executionMetadata: {
+      requiredSkills: ["jira-core", "jira-execution-loop"],
+      optionalSkills: ["jira-intake-refinement"],
       executionMode: "implement"
     }
   },
   {
     id: "epic-change",
     issueType: "Epic",
-    summary: "Change request orchestration es scope evolution control",
+    summary: "Change request control and scope evolution",
     description: [
-      "Cel: a projekt kozbeni uj igenyeket, visszanyitasokat es scope-valtozasokat a rendszer explicit valtozasvezetesben kezelje.",
+      "Goal: handle scope changes explicitly instead of hiding them inside ticket comments.",
       "",
-      "Elvart eredmeny:",
-      "- CR, bug, reopen es uj scope osztalyozas",
-      "- impact analysis az erintett issue-kra es dependency-kre",
-      "- backlog ujraszervezes audit traillel"
+      "Expected outcome:",
+      "- classify incoming changes",
+      "- estimate impact on existing work",
+      "- reopen, modify, create, or relink items safely"
     ].join("\n"),
     labels: ["change", "scope"],
     executionMetadata: {
@@ -311,14 +250,14 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
     id: "story-change-classify",
     issueType: "Story",
     parentId: "epic-change",
-    summary: "Bejovo valtozasok osztalyozasa: CR, bug, reopen vagy uj scope",
+    summary: "Classify incoming scope changes",
     description: [
-      "A rendszernek kulonbseget kell tennie uj scope, hibajavitas, visszanyitas es meglevo igeny modositasa kozott.",
+      "The assistant should distinguish between new scope, bug work, reopen requests, and modifications to existing intent.",
       "",
       "Acceptance criteria:",
-      "- a bejovo valtozas legalabb 4 osztaly valamelyikebe sorolhato",
-      "- a besorolas nem pusztan issue type, hanem kontextus alapu dontes",
-      "- ketertelmu esetben a rendszer explicit dontesi pontot jelez"
+      "- incoming changes are classified into explicit categories",
+      "- classification considers context, not just issue type",
+      "- ambiguous cases produce an explicit decision point"
     ].join("\n"),
     labels: ["change", "classification"],
     executionMetadata: {
@@ -331,14 +270,14 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
     id: "story-change-impact",
     issueType: "Story",
     parentId: "epic-change",
-    summary: "Impact analysis a scopevaltozasokhoz, dependency-khez es release sorrendhez",
+    summary: "Estimate impact on dependencies and release order",
     description: [
-      "Minden komoly valtozasnal fel kell merni, hogy mely issue-ket, dependency-ket, prioritast vagy release sorrendet erinti.",
+      "Every significant change should assess which issues, dependencies, priorities, or release sequence are affected.",
       "",
       "Acceptance criteria:",
-      "- az impact analysis az erintett issue-kat es dependency-ket felsorolja",
-      "- jelzi, ha valtozas miatt issue-t vissza kell nyitni vagy splitelni kell",
-      "- a release vagy sorrendi kockazat dokumentalt"
+      "- impacted issues and dependencies are listed",
+      "- reopen or split recommendations are explicit",
+      "- release risk is documented"
     ].join("\n"),
     labels: ["change", "impact"],
     executionMetadata: {
@@ -346,101 +285,14 @@ const BLUEPRINTS: CapabilityBlueprint[] = [
       optionalSkills: ["jira-workflow-admin"],
       executionMode: "implement"
     }
-  },
-  {
-    id: "story-change-apply",
-    issueType: "Story",
-    parentId: "epic-change",
-    summary: "Change plan alkalmazasa: reopen, modify, create es relink",
-    description: [
-      "A rendszer a jovahagyott valtozasi terv alapjan tudjon regi issue-t visszanyitni, modositani, uj issue-t letrehozni, es a kapcsolatokat atepiteni.",
-      "",
-      "Acceptance criteria:",
-      "- a change plan vegrehajtasa Jira muveletekre bonthato",
-      "- a reopen, modify, create es relink muveletek audit traillel mennek",
-      "- a backlog valtozasa utolag is magyarazhato"
-    ].join("\n"),
-    labels: ["change", "execution"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-execution-loop", "jira-intake-refinement"],
-      optionalSkills: ["jira-workflow-admin"],
-      executionMode: "implement"
-    }
-  },
-  {
-    id: "epic-traceability",
-    issueType: "Epic",
-    summary: "Traceability, approval gate es audit trail",
-    description: [
-      "Cel: a nagy hatasu valtozasok, bugok es scope-dontesek emberileg is kovethetok es jovahagyhatok legyenek.",
-      "",
-      "Elvart eredmeny:",
-      "- rovid, visszakeresheto dontesi naplo",
-      "- approval gate nagy hatasu muveletekre",
-      "- brieftol bugig es CR-ig tarto kapcsolatmodell"
-    ].join("\n"),
-    labels: ["audit", "traceability"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-execution-loop"],
-      optionalSkills: ["jira-workflow-admin"],
-      executionMode: "implement"
-    }
-  },
-  {
-    id: "story-decision-trail",
-    issueType: "Story",
-    parentId: "epic-traceability",
-    summary: "Dontesi naplo es valtozasi nyom brieftol issue-ig",
-    description: [
-      "A rendszernek rovid, visszakeresheto dontesi nyomot kell hagynia minden komoly backlog-, workflow- vagy scope-valtozas utan.",
-      "",
-      "Acceptance criteria:",
-      "- a fontos dontesek nem vesznek el kommentzajban",
-      "- brief, issue, bug es CR kozott visszakovetheto a kapcsolat",
-      "- a valtozas oka roviden dokumentalt"
-    ].join("\n"),
-    labels: ["audit", "decision-log"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-execution-loop"],
-      executionMode: "implement"
-    }
-  },
-  {
-    id: "story-approval-gates",
-    issueType: "Story",
-    parentId: "epic-traceability",
-    summary: "Approval gate nagy hatasu workflow- es scope-muveletekre",
-    description: [
-      "A rendszernek kulon kell kezelnie azokat a muveleteket, amelyek workflow-atirat, tomeges backlog-modositas vagy nagy scope-valtozas miatt emberi jovahagyast igenyelnek.",
-      "",
-      "Acceptance criteria:",
-      "- a rizikos muveletek kulon osztalyba sorolhatok",
-      "- az approval gate triggerelheto policy alapjan",
-      "- az asszisztens nem hajt vegre vakon nagy hatasu mutaciot"
-    ].join("\n"),
-    labels: ["audit", "approval"],
-    executionMetadata: {
-      requiredSkills: ["jira-core", "jira-workflow-admin"],
-      optionalSkills: ["jira-execution-loop"],
-      executionMode: "admin"
-    }
   }
 ];
 
 const DEPENDENCIES: DependencyBlueprint[] = [
   { blocks: "story-workflow-discovery", blockedBy: "story-readiness-policy" },
-  { blocks: "story-readiness-policy", blockedBy: "story-workflow-apply" },
-  { blocks: "story-dependency-model", blockedBy: "story-dependency-selection" },
-  { blocks: "story-dependency-selection", blockedBy: "story-dependency-maintenance" },
-  { blocks: "story-readiness-policy", blockedBy: "story-bug-evidence" },
   { blocks: "story-test-generation", blockedBy: "story-bug-evidence" },
-  { blocks: "story-bug-evidence", blockedBy: "story-retest-loop" },
-  { blocks: "story-change-classify", blockedBy: "story-change-impact" },
-  { blocks: "story-change-impact", blockedBy: "story-change-apply" },
-  { blocks: "story-workflow-apply", blockedBy: "story-approval-gates" },
-  { blocks: "story-change-impact", blockedBy: "story-approval-gates" },
-  { blocks: "story-change-apply", blockedBy: "story-decision-trail" },
-  { blocks: "story-bug-evidence", blockedBy: "story-decision-trail" }
+  { blocks: "story-dependency-model", blockedBy: "story-dependency-selection" },
+  { blocks: "story-change-classify", blockedBy: "story-change-impact" }
 ];
 
 async function main(): Promise<void> {
@@ -448,7 +300,15 @@ async function main(): Promise<void> {
 
   const config = loadConfig();
   const jiraApi = new JiraApi(config);
-  const projectKey = config.defaultProjectKey ?? "KAN";
+  const projectKey =
+    config.validationProjectKey ?? config.defaultProjectKey ?? undefined;
+
+  if (!projectKey) {
+    throw new Error(
+      "Missing JIRA_DEFAULT_PROJECT_KEY or JIRA_VALIDATION_PROJECT_KEY. Refusing to seed the sample roadmap without an explicit target project."
+    );
+  }
+
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const results: StepResult[] = [];
 
@@ -509,7 +369,6 @@ async function main(): Promise<void> {
     }
 
     const issue = await jiraApi.createIssue(payload);
-
     issueKeysById[blueprint.id] = issue.key;
     created.push(issue.key);
   }
@@ -528,9 +387,9 @@ async function main(): Promise<void> {
 
     await jiraApi.linkIssues({
       typeName: "Blocks",
-      inwardIssueKey: targetKey,
-      outwardIssueKey: sourceKey,
-      comment: "Codex capability roadmap dependency"
+      inwardIssueKey: sourceKey,
+      outwardIssueKey: targetKey,
+      comment: "Seeded by the sample capability roadmap flow."
     });
   }
 
@@ -539,16 +398,17 @@ async function main(): Promise<void> {
     ok: true,
     details: {
       projectKey,
+      createdCount: created.length,
+      reusedCount: reused.length,
       created,
-      reused,
-      issueKeysById
+      reused
     }
   });
 
   const reportPath = resolve(
     process.cwd(),
     "artifacts",
-    `capability-roadmap-live-seed-${timestamp}.json`
+    `sample-roadmap-seed-${timestamp}.json`
   );
 
   await mkdir(resolve(process.cwd(), "artifacts"), { recursive: true });
@@ -569,13 +429,13 @@ async function main(): Promise<void> {
     "utf8"
   );
 
-  console.log(`Capability roadmap seed OK. Report written to ${reportPath}`);
+  console.log(`Sample roadmap seed OK. Report written to ${reportPath}`);
   console.log(`Created: ${created.join(", ") || "none"}`);
   console.log(`Reused: ${reused.join(", ") || "none"}`);
 }
 
 function qualifiedSummary(summary: string): string {
-  return `[Capability] ${summary}`;
+  return `[Sample Capability] ${summary}`;
 }
 
 async function hasBlocksLink(

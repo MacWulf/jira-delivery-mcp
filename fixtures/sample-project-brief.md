@@ -1,67 +1,68 @@
-# Projekt brief: Teszt admin felulet
+# Project Brief: Internal Support Console
 
-## Alapadatok
+## Basics
 
-- Projekt neve: Teszt admin felulet
-- Projekt kulcs: TESTUI
-- Projekt tipus: `software`
-- Jira mod: `team-managed`
+- Project name: Internal Support Console
+- Project key: SUPPORTUI
+- Project type: `software`
+- Management model: `team-managed`
 - Delivery mode: `kanban`
 
-## Cel
+## Goal
 
-A cel egy egyszeru, belso admin felulet elinditasa, amellyel a tamogatasi csapat tudja kezelni a felhasznaloi kerdeseket, alap adatokat es manualis ellenorzeseket.
+Build a lightweight internal support console that helps operators manage customer requests, reference data, and manual verification steps.
 
-## Celhasznalo
+## Target Users
 
-- belso tamogatasi munkatars
-- operacios team
-- projektgazda
+- internal support specialists
+- operations team members
+- product owner
 
-## Elso release
+## First Release
 
-Az elso hasznalhato slice legyen egy olyan alap felulet, ahol:
-- be lehet jelentkezni
-- listazhatok a nyitott kerelmek
-- egy kerelmet statusz alapjan meg lehet tekinteni
-- a tamogatasi munkatars tud rola kommentet hagyni
+The first usable slice should allow a support specialist to:
 
-## Mi nem fer bele most
+- sign in
+- browse open requests
+- open a request detail view
+- leave an internal comment on a request
 
-- teljes jogosultsagkezeles
-- automatizalt SLA motor
-- tobb rendszeres integracio
-- reporting dashboard
+## Out of Scope for the First Release
 
-## Korlatozasok
+- full role and permission management
+- automated SLA engine
+- multi-system synchronization
+- reporting dashboards
 
-- A csapat kis letszamu, ezert a kezdo backlog legyen kicsi.
-- A projekt team-managed maradjon, hogy a kezdeti konfiguracio gyors legyen.
-- A munkat Kanban alapon kell vezetni.
+## Constraints
 
-## Kezdo Jira struktura
+- keep the initial backlog small because the team is small
+- prefer a fast-start project model for the initial setup
+- run the work in a Kanban-style delivery flow
+
+## Initial Jira Structure
 
 ### Epic
 
-- Admin felulet alapjai
+- Support console foundation
 
-### Starter story-k
+### Starter Stories
 
-- Bejelentkezes es session kezeles
-- Nyitott kerelmek listaja
-- Kerelmek reszletezo nezet
-- Komment hozzaadas kerelemhez
+- Sign-in and session handling
+- Open requests list
+- Request detail view
+- Internal request comments
 
-### Kezdo taskok
+### Starter Tasks
 
-- Repo es projekt alapbeallitas
-- UI vaz letrehozasa
-- Alap API kapcsolat
-- Tesztadat minta
+- Repository and project bootstrap
+- UI shell setup
+- Base API integration
+- Sample request dataset
 
-## Elfogadasi elvek
+## Acceptance Approach
 
-- Az elso slice mukodo legyen end-to-end.
-- A backlog legyen kicsi, attekintheto, es azonnal indithato.
-- Minden story-hoz legyen egyertelmu elfogadasi feltetel.
-- A dependency-k legyenek explicit linkelve.
+- the first slice should work end to end
+- the backlog should stay compact, readable, and startable
+- every story should have clear acceptance criteria
+- dependencies should be linked explicitly
