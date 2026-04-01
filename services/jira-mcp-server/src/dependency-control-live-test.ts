@@ -28,12 +28,11 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const jiraApi = new JiraApi(config);
   const dependencyDriftService = new DependencyDriftService(jiraApi, config);
-  const projectKey =
-    config.validationProjectKey ?? config.defaultProjectKey ?? undefined;
+  const projectKey = config.validationProjectKey;
 
   if (!projectKey) {
     throw new Error(
-      "Missing JIRA_DEFAULT_PROJECT_KEY or JIRA_VALIDATION_PROJECT_KEY. Refusing to run dependency validation without an explicit target project."
+      "Missing JIRA_VALIDATION_PROJECT_KEY. Refusing to run dependency validation outside the dedicated validation project."
     );
   }
 
@@ -160,8 +159,8 @@ async function main(): Promise<void> {
   const driftReport = await dependencyDriftService.analyze({
     jql: `labels = "${label}" ORDER BY key ASC`,
     expectedDependencies: [
-      { sourceIssueKey: dependent.key, targetIssueKey: foundation.key },
-      { sourceIssueKey: downstream.key, targetIssueKey: dependent.key }
+      { sourceIssueKey: foundation.key, targetIssueKey: dependent.key },
+      { sourceIssueKey: dependent.key, targetIssueKey: downstream.key }
     ]
   });
 
