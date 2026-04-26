@@ -4,6 +4,8 @@
 
 It is built for teams that want AI-assisted Jira execution without losing deterministic tooling, workflow awareness, or auditability.
 
+Current release: `v0.2.0`
+
 ## Who It Is For
 
 Use this project if you want an assistant to help with Jira work such as:
@@ -30,6 +32,14 @@ Use this project if you want an assistant to help with Jira work such as:
 - plan retest loops without hardcoding a workflow or status set
 - store execution metadata in issue descriptions and resolve it during execution
 - validate dependency state before picking or starting work
+
+## Highlights In v0.2.0
+
+- workflow-aware issue state reconciliation, including helper fallback for safe drift repair
+- readiness and quality-governance policy layers for disciplined delivery movement
+- change-control planning surface for classifying incoming scope change before mutation
+- Confluence publishing and governance planning as a first-class optional capability
+- expanded Codex skill package for bootstrap, execution, quality, documentation, and workflow administration
 
 ## Quick Example
 
