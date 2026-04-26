@@ -1,3 +1,4 @@
 interface:
   display_name: "Jira Project Bootstrap"
-  short_description: "Bootstrap Jira backlog from a project brief"
+  short_description: "Bootstrap Jira backlog with test-plan companions"
+  default_prompt: "Use -project-bootstrap to seed a small Jira project backlog, then route every behavior-changing delivery issue to jira-quality-control so linked pre-dev test plan issues guide implementation."

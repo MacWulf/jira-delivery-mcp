@@ -1,6 +1,6 @@
 ---
 name: jira-intake-refinement
-description: Use when the task is to classify, shape, split, or clean Jira backlog items. This skill defines issue typing, parent-child expectations, readiness rules, and backlog hygiene.
+description: Use when the task is to classify, shape, split, or clean Jira backlog items. This skill defines issue typing, parent-child expectations, readiness rules, and backlog hygiene. When a refined item is likely to require implementation, bugfixing, refactoring, integration, automation, API, UI, backend, frontend, or behavior-changing work, mark jira-quality-control as the expected follow-up so pre-dev test planning happens before coding.
 ---
 
 # Jira Intake Refinement
@@ -45,10 +45,17 @@ If an item has no user value and no defect behavior, it is usually a task, not a
    Stories should normally roll into an epic. Tasks should normally support a story or epic. Sub-tasks must have a parent.
 4. Define ready-to-build content.
    Add a clear summary, problem context, goal, acceptance criteria, dependencies, and key assumptions.
+   If the item is likely to require code changes, record `$jira-quality-control` as the next companion skill so a pre-dev test plan issue is created or updated before implementation.
 5. Split oversized work.
    If an item has multiple unrelated outcomes or cannot be completed in one focused delivery cycle, split it.
 6. Reject weak tickets.
    If scope, ownership, or expected outcome is still ambiguous, move it back to refinement instead of pushing it into execution.
+
+## Write Behavior
+
+- Ordinary backlog shaping writes such as creating, updating, and linking issues should execute live by default.
+- Do not stop for confirmation during normal refinement unless the runtime is explicitly in preview mode.
+- If refinement depends on admin-risk changes such as issue-type creation or custom-field creation, surface the confirmation or manual Jira step explicitly.
 
 ## Ready Criteria
 

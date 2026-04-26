@@ -1,4 +1,5 @@
 import type { AppConfig } from "../config.js";
+import { inferWorkflowSemantic } from "../policy/workflow-semantics.js";
 import type { JiraApi } from "./jira-api.js";
 
 type IssueForDependencyDrift = {
@@ -195,9 +196,12 @@ function buildBlockedStatusConflicts(
 ): DependencyDriftReport["blockedStatusConflicts"] {
   return issues
     .filter((issue) => {
-      const normalizedStatus = normalize(issue.fields?.status?.name);
+      const semantic = inferWorkflowSemantic({
+        statusName: issue.fields?.status?.name,
+        statusCategoryKey: issue.fields?.status?.statusCategory?.key
+      });
 
-      return normalizedStatus === "in progress" || normalizedStatus === "in review";
+      return semantic === "in_progress" || semantic === "review" || semantic === "qa";
     })
     .flatMap((issue) => {
       const blockers = (issue.fields?.issuelinks ?? [])

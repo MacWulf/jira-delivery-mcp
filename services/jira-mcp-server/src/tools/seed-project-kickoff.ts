@@ -15,10 +15,11 @@ export function registerSeedProjectKickoffTool(
     {
       title: "Seed project kickoff backlog",
       description:
-        "Seed a reusable assistant-managed kickoff backlog into a Jira software project and optionally start the first work item.",
+        "Seed a reusable assistant-managed kickoff backlog into a Jira software project, generate linked pre-development test plans for implementation work by default, and optionally start the first work item.",
       inputSchema: {
         projectKey: z.string().min(1).optional(),
         startFirstIssue: z.boolean().default(true),
+        generateTestPlans: z.boolean().default(true),
         assigneeAccountId: z.string().min(1).optional(),
         confirm: z.boolean().optional()
       }
@@ -26,6 +27,7 @@ export function registerSeedProjectKickoffTool(
     async (input: {
       projectKey?: string;
       startFirstIssue?: boolean;
+      generateTestPlans?: boolean;
       assigneeAccountId?: string;
       confirm?: boolean;
     }) => {
@@ -52,7 +54,8 @@ export function registerSeedProjectKickoffTool(
             template: template.key,
             itemCount: template.items.length,
             dependencyCount: template.dependencies.length,
-            startFirstIssue: input.startFirstIssue ?? true
+            startFirstIssue: input.startFirstIssue ?? true,
+            generateTestPlans: input.generateTestPlans ?? true
           })
         };
       }
@@ -60,6 +63,7 @@ export function registerSeedProjectKickoffTool(
       const payload: {
         projectKey: string;
         startFirstIssue?: boolean;
+        generateTestPlans?: boolean;
         assigneeAccountId?: string;
       } = {
         projectKey
@@ -67,6 +71,10 @@ export function registerSeedProjectKickoffTool(
 
       if (input.startFirstIssue !== undefined) {
         payload.startFirstIssue = input.startFirstIssue;
+      }
+
+      if (input.generateTestPlans !== undefined) {
+        payload.generateTestPlans = input.generateTestPlans;
       }
 
       if (input.assigneeAccountId) {

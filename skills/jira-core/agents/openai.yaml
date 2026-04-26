@@ -1,4 +1,4 @@
 interface:
   display_name: "Jira Core"
-  short_description: "Tenant-aware Jira operating model"
-  default_prompt: "Use -core to decide how Jira work should be classified, seeded, and executed safely."
+  short_description: "Tenant-aware Jira routing and companion skills"
+  default_prompt: "Use -core to classify Jira work, route companion skills, and attach jira-quality-control before code-changing delivery work so tests guide implementation."

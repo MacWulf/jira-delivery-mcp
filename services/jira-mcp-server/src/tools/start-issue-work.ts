@@ -6,6 +6,7 @@ import {
   buildDryRunResult,
   ensureWriteAllowed
 } from "../policy/write-policy.js";
+import type { DeliveryHelperReconciliationService } from "../services/delivery-helper-reconciliation-service.js";
 import type { JiraAssistantService } from "../services/jira-assistant-service.js";
 import type { JiraApi } from "../services/jira-api.js";
 
@@ -13,6 +14,7 @@ export function registerStartIssueWorkTool(
   server: { registerTool: Function },
   jiraApi: JiraApi,
   assistantService: JiraAssistantService,
+  helperReconciliationService: DeliveryHelperReconciliationService,
   config: AppConfig
 ) {
   server.registerTool(
@@ -34,22 +36,51 @@ export function registerStartIssueWorkTool(
       comment?: string;
       confirm?: boolean;
     }) => {
-      const plan = await assistantService.planStartIssueWork(
-        input.issueKey,
-        input.preferredTransitionName
-      );
-
       const writeMode = ensureWriteAllowed(
         config,
         "transition_issue",
         input.confirm
       );
 
+      let plan;
+
+      try {
+        plan = await assistantService.planStartIssueWork(
+          input.issueKey,
+          input.preferredTransitionName
+        );
+      } catch (error) {
+        const fallback = await helperReconciliationService.resolveFailure({
+          issueKey: input.issueKey,
+          operation: "start",
+          normalFailure:
+            error instanceof Error ? error.message : String(error),
+          allowApply: writeMode.mode !== "dry-run",
+          ...(input.confirm !== undefined ? { confirm: input.confirm } : {})
+        });
+
+        if (
+          fallback.resultType === "reconciliation_applied" &&
+          input.comment
+        ) {
+          await jiraApi.addComment({
+            issueKey: input.issueKey,
+            comment: input.comment
+          });
+        }
+
+        return {
+          ...toolText(fallback.message),
+          structuredContent: fallback
+        };
+      }
+
       if (writeMode.mode === "dry-run") {
         return {
           ...toolText(`Dry-run: would start work on ${input.issueKey}.`),
           structuredContent: buildDryRunResult("transition_issue", {
             ...plan,
+            resultType: "normal_success",
             comment: input.comment
           })
         };
@@ -74,9 +105,12 @@ export function registerStartIssueWorkTool(
         ...toolText(
           `Started work on ${input.issueKey} via ${plan.transitionName}.`
         ),
-        structuredContent: plan
+        structuredContent: {
+          resultType: "normal_success",
+          operation: "start",
+          plan
+        }
       };
     }
   );
 }
-

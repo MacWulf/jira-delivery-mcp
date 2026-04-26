@@ -3,11 +3,11 @@ import { z } from "zod";
 import type { AppConfig } from "../config.js";
 import { toolText } from "../lib/mcp.js";
 import { buildDryRunResult, ensureWriteAllowed } from "../policy/write-policy.js";
-import type { JiraApi } from "../services/jira-api.js";
+import type { ConfluenceApi } from "../services/confluence-api.js";
 
 export function registerCreateDocPageTool(
   server: { registerTool: Function },
-  jiraApi: JiraApi,
+  confluenceApi: ConfluenceApi,
   config: AppConfig
 ) {
   server.registerTool(
@@ -63,7 +63,7 @@ export function registerCreateDocPageTool(
         payload.parentId = input.parentId;
       }
 
-      const page = await jiraApi.createDocPage(payload);
+      const page = await confluenceApi.createPage(payload);
 
       return {
         ...toolText(`Created Confluence page ${page.title}.`),

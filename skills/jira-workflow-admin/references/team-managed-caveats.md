@@ -21,4 +21,5 @@ Use this reference when the project is team-managed or simplified.
 - Read the current project configuration.
 - Map the existing statuses and transitions.
 - Only then decide whether a workflow change is worth it.
-
+- If the team needs technical QA and human acceptance separated on the board, prefer adding a single `User Testing` status after `QA` instead of duplicating multiple review-like states.
+- If the team needs to represent intentionally stopped backlog items, prefer a distinct `Cancelled` status with an explicit restore path instead of abusing `Done`.

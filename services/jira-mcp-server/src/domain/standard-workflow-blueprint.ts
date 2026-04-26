@@ -3,10 +3,12 @@ export type StandardWorkflowStatusBlueprint = {
     | "todo"
     | "selected"
     | "inProgress"
-    | "blocked"
-    | "review"
-    | "qa"
-    | "done";
+  | "blocked"
+  | "review"
+  | "qa"
+  | "userTesting"
+  | "cancelled"
+  | "done";
   name: string;
   description: string;
   statusCategory: "TODO" | "IN_PROGRESS" | "DONE";
@@ -71,9 +73,25 @@ export const STANDARD_TEAM_MANAGED_WORKFLOW_STATUSES: StandardWorkflowStatusBlue
       key: "qa",
       name: "QA",
       description:
-        "The work item is under validation against its acceptance criteria before closure.",
+        "The work item is under assistant-owned or technically verifiable validation against its acceptance criteria before human acceptance.",
       statusCategory: "IN_PROGRESS",
       layout: { x: 1020, y: -16 }
+    },
+    {
+      key: "userTesting",
+      name: "User Testing",
+      description:
+        "The work item is waiting for human-owned business or manual validation after technical QA completes.",
+      statusCategory: "IN_PROGRESS",
+      layout: { x: 1240, y: -16 }
+    },
+    {
+      key: "cancelled",
+      name: "Cancelled",
+      description:
+        "The work item was intentionally stopped, superseded, or removed from scope without being completed.",
+      statusCategory: "DONE",
+      layout: { x: 1240, y: 150 }
     },
     {
       key: "done",
@@ -81,7 +99,7 @@ export const STANDARD_TEAM_MANAGED_WORKFLOW_STATUSES: StandardWorkflowStatusBlue
       description:
         "The work item is accepted, validated, and no further delivery work is expected.",
       statusCategory: "DONE",
-      layout: { x: 1260, y: -16 }
+      layout: { x: 1460, y: -16 }
     }
   ];
 
@@ -120,7 +138,7 @@ export const STANDARD_TEAM_MANAGED_WORKFLOW_TRANSITIONS: StandardWorkflowTransit
       name: "Mark Blocked",
       type: "DIRECTED",
       to: "blocked",
-      from: ["inProgress", "review", "qa"]
+      from: ["inProgress", "review", "qa", "userTesting"]
     },
     {
       id: "141",
@@ -141,7 +159,7 @@ export const STANDARD_TEAM_MANAGED_WORKFLOW_TRANSITIONS: StandardWorkflowTransit
       name: "Changes Requested",
       type: "DIRECTED",
       to: "inProgress",
-      from: ["review", "qa"]
+      from: ["review", "qa", "userTesting"]
     },
     {
       id: "171",
@@ -152,13 +170,41 @@ export const STANDARD_TEAM_MANAGED_WORKFLOW_TRANSITIONS: StandardWorkflowTransit
     },
     {
       id: "181",
-      name: "Accepted",
+      name: "Send to User Testing",
       type: "DIRECTED",
-      to: "done",
+      to: "userTesting",
       from: ["qa"]
     },
     {
       id: "191",
+      name: "User Testing Failed",
+      type: "DIRECTED",
+      to: "inProgress",
+      from: ["userTesting"]
+    },
+    {
+      id: "201",
+      name: "Accepted",
+      type: "DIRECTED",
+      to: "done",
+      from: ["userTesting"]
+    },
+    {
+      id: "206",
+      name: "Cancel Work",
+      type: "DIRECTED",
+      to: "cancelled",
+      from: ["todo", "selected", "inProgress", "blocked", "review", "qa", "userTesting"]
+    },
+    {
+      id: "208",
+      name: "Restore To Do",
+      type: "DIRECTED",
+      to: "todo",
+      from: ["cancelled"]
+    },
+    {
+      id: "211",
       name: "Reopen",
       type: "DIRECTED",
       to: "todo",

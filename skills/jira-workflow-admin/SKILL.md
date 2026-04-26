@@ -17,6 +17,7 @@ Use this skill when the user asks to:
 - decide which fields must be required at which stage
 - adjust workflow schemes, screen policy, or field configuration
 - migrate a project from a weak process to a stronger one
+- investigate why workflow-state reconciliation cannot find a safe path because the project workflow itself is missing required states or transitions
 
 Do not use this skill for ordinary issue movement. That belongs in `$jira-execution-loop`.
 
@@ -41,6 +42,7 @@ Do not use this skill for ordinary issue movement. That belongs in `$jira-execut
 
 - Status names must have distinct meanings.
 - Do not create multiple statuses that all really mean "someone is working on it."
+- If the workflow includes both `QA` and `User Testing`, keep their meanings distinct: `QA` is assistant-owned or technically verifiable validation, while `User Testing` is the human-owned acceptance gate.
 - Required fields should be enforced where they improve quality, not merely to add friction.
 - Workflow guidance must adapt to the discovered tenant and project model, not to a baked-in preferred scheme.
 - Shared company-managed workflows need stronger change control than isolated team-managed flows.
@@ -48,10 +50,15 @@ Do not use this skill for ordinary issue movement. That belongs in `$jira-execut
 
 ## Guardrails
 
+- Workflow, scheme, issue-type, field, and other tenant-shaping changes are admin-risk writes. Require explicit confirmation when the runtime confirmation gate is enabled.
 - Never rewrite a live workflow blindly.
 - Never assume a shared workflow only affects the current project.
 - Do not add review or QA states unless ownership for those states is real.
+- If human acceptance needs to be visibly distinct from technical validation, prefer a dedicated `User Testing` status instead of overloading `QA`.
 - Avoid complex transition logic that the team will not follow consistently.
+- If active work cannot leave `To Do` cleanly, treat that as a real workflow or policy defect, not as a harmless reporting issue.
+- If workflow-state reconciliation fails because the workflow itself has no safe path for a valid operational state change, treat that as an administrative defect rather than forcing the execution loop to guess.
+- If execution-loop helpers report `workflow_admin_required`, treat that as a workflow design defect first, not as an issue-level delivery failure.
 - If the project is still exploratory, prefer a simpler workflow and tighten governance later.
 - If a desired admin action is not supported through the available AI tools or public API, stop and tell the user the manual Jira step instead of pretending the automation exists.
 

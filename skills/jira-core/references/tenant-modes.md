@@ -49,4 +49,5 @@ Prefer this order:
 
 Do not rewrite workflow or field policy unless the user explicitly wants admin-level changes.
 For normal delivery work, adapt to the existing Jira setup instead of reshaping it.
+For quality-control work, prefer the smallest issue-type or field-policy change that preserves evidence, validation, and retest traceability.
 If the capability boundary is hit, say so plainly instead of implying the AI can do more than the tenant and tool surface actually allow.

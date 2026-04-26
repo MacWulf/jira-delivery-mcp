@@ -35,10 +35,12 @@ export function registerGetProjectAdminSnapshotTool(
         ...toolText(`Fetched admin snapshot for ${input.projectKey}.`),
         structuredContent: {
           project,
+          issueTypes: project.issueTypes ?? [],
           managementModel: simplified ? "team-managed" : "company-managed",
           notes: simplified
             ? [
-                "This project appears to be team-managed or simplified. Classic workflow and issue type scheme APIs may return empty assignments."
+                "This project appears to be team-managed or simplified. Classic workflow and issue type scheme APIs may return empty assignments.",
+                "Use project issue types and create-meta discovery before assuming scheme-level Jira admin control."
               ]
             : [],
           workflowSchemes: workflowSchemes.values ?? [],

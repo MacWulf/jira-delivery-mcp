@@ -23,6 +23,7 @@ export type IssueDependencySnapshot = {
   openBlockedBy: IssueDependencyReference[];
   blocks: IssueDependencyReference[];
   openBlocks: IssueDependencyReference[];
+  activeOpenBlocks: IssueDependencyReference[];
   related: IssueDependencyReference[];
   hasOpenBlockingDependencies: boolean;
   blocksOpenWork: boolean;
@@ -69,15 +70,41 @@ export function buildIssueDependencySnapshot(
   const openBlocks = blocks.filter(
     (dependency) => dependency.statusCategoryKey !== "done"
   );
+  const activeOpenBlocks = openBlocks.filter(
+    (dependency) => dependency.statusCategoryKey !== "new"
+  );
 
   return {
     blockedBy,
     openBlockedBy,
     blocks,
     openBlocks,
+    activeOpenBlocks,
     related,
     hasOpenBlockingDependencies: openBlockedBy.length > 0,
     blocksOpenWork: openBlocks.length > 0
+  };
+}
+
+export function buildDownstreamImpactSummary(issue: JiraIssueForSelection): {
+  openCount: number;
+  activeCount: number;
+  issueKeys: string[];
+  note: string;
+} {
+  const snapshot = buildIssueDependencySnapshot(issue);
+  const issueKeys = snapshot.openBlocks.map((dependency) => dependency.issueKey);
+
+  return {
+    openCount: snapshot.openBlocks.length,
+    activeCount: snapshot.activeOpenBlocks.length,
+    issueKeys,
+    note:
+      snapshot.openBlocks.length === 0
+        ? "No open downstream dependency impact."
+        : snapshot.activeOpenBlocks.length > 0
+          ? "This issue blocks downstream work that is already active outside backlog states."
+          : "This issue blocks downstream work that is still queued or not yet done."
   };
 }
 

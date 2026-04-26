@@ -1,0 +1,4 @@
+version: 1
+agent:
+  model: gpt-5.4
+  default_prompt: "Use jira-documentation-publishing to publish repo-first project documentation into Confluence through duplicate-aware, controlled tools."

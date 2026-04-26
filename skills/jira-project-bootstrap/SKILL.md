@@ -1,6 +1,6 @@
 ---
 name: jira-project-bootstrap
-description: Use when the task is to turn a project brief, repo, or kickoff request into a Jira project structure, starter backlog, and initial delivery plan.
+description: Use when the task is to turn a project brief, repo, or kickoff request into a Jira project structure, starter backlog, and initial delivery plan. When the seeded backlog contains implementation, bugfix, refactor, integration, UI, backend, frontend, mobile, API, transport, auth, automation, or other behavior-changing delivery issues, immediately route to jira-quality-control before ending the turn so linked pre-development test plan issues are created or required.
 ---
 
 # Jira Project Bootstrap
@@ -35,8 +35,18 @@ This skill is for project kickoff. Once the backlog exists, route refinement wor
    Keep the initial backlog intentionally small, dependency-aware, and ready to start without guesswork.
 6. Select the first delivery slice.
    Choose the smallest useful slice that proves the project can move from planning into real delivery.
-7. Hand off to operational skills.
+7. Create or require quality companions.
+   For each seeded implementation, bugfix, refactor, integration, UI, backend, frontend, mobile, API, transport, auth, automation, or other behavior-changing delivery issue, route to `$jira-quality-control` and create or require a linked pre-development test plan issue before ending the turn.
+8. Hand off to operational skills.
    Once the project is seeded, switch to intake or execution skills instead of continuing to bootstrap indefinitely.
+
+## Bootstrap Quality Companion Rule
+
+When this skill routes to `$jira-project-bootstrap` and the seeded backlog contains any implementation, bugfix, refactor, integration, UI, backend, frontend, mobile, API, transport, auth, automation, or other behavior-changing delivery issue, immediately route to `$jira-quality-control` before ending the turn.
+
+For each such delivery issue, create or require a linked pre-development test plan issue. Use a native validation/test-style issue type when available. If unavailable, use the tenant-safe fallback: `Task` with `quality`, `quality-test`, `quality-validation`, and `pre-dev-test-plan` labels.
+
+A single general QA or stability issue is not enough unless it explicitly covers and links to every affected delivery issue.
 
 ## Seeding Rules
 
@@ -46,6 +56,7 @@ This skill is for project kickoff. Once the backlog exists, route refinement wor
 - Create bugs only for actual defects or known migration risks.
 - Add dependencies when sequencing matters; do not bury them in prose.
 - Make the first issues executable, not merely descriptive.
+- Do not finish bootstrap with behavior-changing delivery issues that lack linked pre-dev test plan coverage or an explicit note that an existing linked test plan is current and sufficient.
 - Do not try to model the entire future roadmap on day one.
 - If the target project cannot support a requested issue type, workflow step, or admin action through the available AI tools, note the gap and surface the required manual Jira step.
 
@@ -59,9 +70,11 @@ When responding, structure the bootstrap result like this:
    Include exactly one starter epic, then the first stories and day-one tasks.
 3. Dependency map
    Show which issues block which outcomes.
-4. First delivery slice
+4. Quality companion plan
+   List each behavior-changing delivery issue and its linked pre-dev test plan issue, or the explicit reason a current existing test plan is sufficient.
+5. First delivery slice
    Explain what should be built first and why.
-5. Open questions
+6. Open questions
    List only the missing information that blocks safe seeding.
 
 Do not label technical setup, scaffolding, mock data, or integration plumbing as stories unless they deliver direct user-facing value.
@@ -79,6 +92,7 @@ Good first slices often focus on setup, access, the primary user flow, or the fi
 ## Bootstrap Guardrails
 
 - Do not create a project shell with no usable starter work.
+- Treat project creation itself as an admin-risk write. It may require explicit confirmation even when ordinary Jira issue operations run live by default.
 - Do not overfit the hierarchy before the first delivery cycle begins.
 - Do not copy company-managed governance into team-managed projects without checking fit.
 - Do not generate dozens of tickets from a weak brief just to appear thorough.

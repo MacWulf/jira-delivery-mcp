@@ -3,11 +3,13 @@ import { z } from "zod";
 import type { AppConfig } from "../config.js";
 import { toolText } from "../lib/mcp.js";
 import { buildDryRunResult, ensureWriteAllowed } from "../policy/write-policy.js";
+import type { JiraAssistantService } from "../services/jira-assistant-service.js";
 import type { JiraApi } from "../services/jira-api.js";
 
 export function registerTransitionIssueTool(
   server: { registerTool: Function },
   jiraApi: JiraApi,
+  assistantService: JiraAssistantService,
   config: AppConfig
 ) {
   server.registerTool(
@@ -28,6 +30,11 @@ export function registerTransitionIssueTool(
       comment?: string;
       confirm?: boolean;
     }) => {
+      const plan = await assistantService.planTransitionIssueById(
+        input.issueKey,
+        input.transitionId
+      );
+
       const writeMode = ensureWriteAllowed(
         config,
         "transition_issue",
@@ -39,7 +46,10 @@ export function registerTransitionIssueTool(
           ...toolText(
             `Dry-run: would transition ${input.issueKey} with transition ${input.transitionId}.`
           ),
-          structuredContent: buildDryRunResult("transition_issue", input)
+          structuredContent: buildDryRunResult("transition_issue", {
+            ...plan,
+            comment: input.comment
+          })
         };
       }
 
@@ -49,7 +59,7 @@ export function registerTransitionIssueTool(
         comment?: string;
       } = {
         issueKey: input.issueKey,
-        transitionId: input.transitionId
+        transitionId: plan.transitionId
       };
 
       if (input.comment) {
@@ -60,9 +70,9 @@ export function registerTransitionIssueTool(
 
       return {
         ...toolText(
-          `Transitioned issue ${input.issueKey} with transition ${input.transitionId}.`
+          `Transitioned issue ${input.issueKey} with transition ${plan.transitionName}.`
         ),
-        structuredContent: input
+        structuredContent: plan
       };
     }
   );

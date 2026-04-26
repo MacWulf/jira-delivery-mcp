@@ -8,6 +8,7 @@ import {
 import { isDoneIssue, type JiraIssueForSelection } from "../policy/assistant-policy.js";
 import type { JiraApi } from "./jira-api.js";
 import type { JiraAssistantService } from "./jira-assistant-service.js";
+import type { QualityControlService } from "./quality-control-service.js";
 
 type ExistingIssue = {
   key: string;
@@ -19,10 +20,27 @@ type ExistingIssue = {
         inward?: string;
         outward?: string;
       };
-      inwardIssue?: { key?: string };
-      outwardIssue?: { key?: string };
+      inwardIssue?: LinkedIssue;
+      outwardIssue?: LinkedIssue;
     }>;
   };
+};
+
+type LinkedIssue = {
+  key?: string;
+  fields?: {
+    summary?: string;
+    labels?: string[];
+  };
+};
+
+type SeedQualityCompanionResult = {
+  created: Record<string, string>;
+  reused: Record<string, string>;
+  skipped: Array<{
+    issueKey: string;
+    reason: string;
+  }>;
 };
 
 export type SeedKickoffResult = {
@@ -33,13 +51,15 @@ export type SeedKickoffResult = {
   started?: string;
   completed: string[];
   issueKeysByBlueprintId: Record<string, string>;
+  qualityCompanions?: SeedQualityCompanionResult;
 };
 
 export class ProjectKickoffService {
   constructor(
     private readonly jiraApi: JiraApi,
     private readonly assistantService: JiraAssistantService,
-    private readonly config: AppConfig
+    private readonly config: AppConfig,
+    private readonly qualityControlService?: QualityControlService
   ) {}
 
   buildDefaultTemplate(): KickoffTemplate {
@@ -50,6 +70,7 @@ export class ProjectKickoffService {
     projectKey?: string;
     startFirstIssue?: boolean;
     assigneeAccountId?: string;
+    generateTestPlans?: boolean;
   }): Promise<SeedKickoffResult> {
     const template = this.buildDefaultTemplate();
     const projectKey = input?.projectKey ?? this.config.defaultProjectKey;
@@ -146,6 +167,11 @@ export class ProjectKickoffService {
       });
     }
 
+    const qualityCompanions =
+      input?.generateTestPlans === false
+        ? undefined
+        : await this.createQualityCompanions(template, issueKeysByBlueprintId);
+
     for (const item of template.items.filter((candidate) => candidate.marksDone)) {
       const issueKey = issueKeysByBlueprintId[item.id];
 
@@ -192,11 +218,100 @@ export class ProjectKickoffService {
       issueKeysByBlueprintId
     };
 
+    if (qualityCompanions) {
+      result.qualityCompanions = qualityCompanions;
+    }
+
     if (started) {
       result.started = started;
     }
 
     return result;
+  }
+
+  private async createQualityCompanions(
+    template: KickoffTemplate,
+    issueKeysByBlueprintId: Record<string, string>
+  ): Promise<SeedQualityCompanionResult> {
+    const result: SeedQualityCompanionResult = {
+      created: {},
+      reused: {},
+      skipped: []
+    };
+
+    if (!this.qualityControlService) {
+      for (const item of template.items.filter(isQualityCompanionCandidate)) {
+        const issueKey = issueKeysByBlueprintId[item.id];
+
+        if (issueKey) {
+          result.skipped.push({
+            issueKey,
+            reason: "quality-control service is not configured"
+          });
+        }
+      }
+
+      return result;
+    }
+
+    for (const item of template.items.filter(isQualityCompanionCandidate)) {
+      const issueKey = issueKeysByBlueprintId[item.id];
+
+      if (!issueKey) {
+        continue;
+      }
+
+      const existingTestPlan = await this.findLinkedTestPlanIssue(issueKey);
+
+      if (existingTestPlan) {
+        result.reused[issueKey] = existingTestPlan;
+        continue;
+      }
+
+      try {
+        const testPlan = await this.qualityControlService.createValidationWork(
+          issueKey
+        );
+        result.created[issueKey] = testPlan.createdIssue.key;
+      } catch (error) {
+        result.skipped.push({
+          issueKey,
+          reason: error instanceof Error ? error.message : String(error)
+        });
+      }
+    }
+
+    return result;
+  }
+
+  private async findLinkedTestPlanIssue(
+    issueKey: string
+  ): Promise<string | undefined> {
+    const issue = (await this.jiraApi.getIssue(issueKey, [
+      "summary",
+      "issuelinks"
+    ])) as ExistingIssue;
+    const links = issue.fields?.issuelinks ?? [];
+
+    for (const link of links) {
+      const linkedIssue = link.inwardIssue ?? link.outwardIssue;
+
+      if (!linkedIssue?.key) {
+        continue;
+      }
+
+      const summary = linkedIssue.fields?.summary?.toLowerCase() ?? "";
+      const labels = linkedIssue.fields?.labels ?? [];
+
+      if (
+        summary.startsWith(`[test plan] ${issueKey.toLowerCase()}`) ||
+        labels.some((label) => label.toLowerCase() === "pre-dev-test-plan")
+      ) {
+        return linkedIssue.key;
+      }
+    }
+
+    return undefined;
   }
 
   private async searchExistingTemplateIssues(
@@ -260,6 +375,14 @@ export class ProjectKickoffService {
       "issuelinks"
     ])) as JiraIssueForSelection;
   }
+}
+
+function isQualityCompanionCandidate(item: KickoffItemBlueprint): boolean {
+  return (
+    item.issueType !== "Epic" &&
+    item.executionMetadata?.executionMode === "implement" &&
+    item.marksDone !== true
+  );
 }
 
 function buildKickoffIssueFields(

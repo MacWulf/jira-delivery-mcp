@@ -10,14 +10,7 @@
     "build": "tsc -p tsconfig.json",
     "check": "tsc --noEmit -p tsconfig.json",
     "dev": "tsx src/index.ts",
-    "smoke": "tsx src/smoke.ts",
-    "validate:live": "tsx src/live-test.ts --confirm-live",
-    "validate:skill-metadata": "tsx src/skill-metadata-live-test.ts --confirm-live",
-    "validate:skill-metadata-demo": "tsx src/skill-metadata-demo-live-test.ts --confirm-live",
-    "seed:sample-roadmap": "tsx src/capability-roadmap-live-seed.ts --confirm-live",
-    "validate:dependencies": "tsx src/dependency-control-live-test.ts --confirm-live",
-    "validate:dependency-drift": "tsx src/dependency-drift-live-test.ts --confirm-live",
-    "validate:workflow-apply": "tsx src/workflow-admin-live-apply.ts --confirm-live"
+    "smoke": "tsx src/smoke.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.28.0",

@@ -13,6 +13,8 @@ export type CodexWorkflowTargetStatusName =
   | "Blocked"
   | "In Review"
   | "QA"
+  | "User Testing"
+  | "Cancelled"
   | "Done";
 
 const TARGET_STATUS_ORDER: Array<{
@@ -56,15 +58,29 @@ const TARGET_STATUS_ORDER: Array<{
   {
     name: "QA",
     description:
-      "This work item is under validation against acceptance criteria.",
+      "This work item is under assistant-owned or technically verifiable validation against acceptance criteria.",
     statusCategory: "IN_PROGRESS",
     layout: { x: 960, y: -16 }
+  },
+  {
+    name: "User Testing",
+    description:
+      "This work item is waiting for human-owned business or manual validation after technical QA is complete.",
+    statusCategory: "IN_PROGRESS",
+    layout: { x: 1160, y: -16 }
+  },
+  {
+    name: "Cancelled",
+    description:
+      "The work item was intentionally stopped, superseded, or removed from the delivery scope without being completed.",
+    statusCategory: "DONE",
+    layout: { x: 1360, y: 170 }
   },
   {
     name: "Done",
     description: "",
     statusCategory: "DONE",
-    layout: { x: 1160, y: -16 }
+    layout: { x: 1560, y: -16 }
   }
 ];
 
@@ -184,7 +200,8 @@ export function buildCodexManagedWorkflowUpdate(input: {
               link("Selected"),
               link("In Progress"),
               link("In Review"),
-              link("QA")
+              link("QA"),
+              link("User Testing")
             ],
             name: "Mark Blocked",
             description:
@@ -248,7 +265,8 @@ export function buildCodexManagedWorkflowUpdate(input: {
             ),
             links: [link("In Review")],
             name: "Send To QA",
-            description: "Move the work item into acceptance validation.",
+            description:
+              "Move the work item into assistant-owned or technically verifiable acceptance validation.",
             actions: [],
             validators: [],
             triggers: [],
@@ -274,11 +292,67 @@ export function buildCodexManagedWorkflowUpdate(input: {
             type: "DIRECTED",
             toStatusReference: requireGeneratedStatusReference(
               statusReferenceByName,
-              "Done"
+              "User Testing"
             ),
             links: [link("QA")],
+            name: "Send To User Testing",
+            description:
+              "Hand the work item off for human-owned business or manual validation.",
+            actions: [],
+            validators: [],
+            triggers: [],
+            properties: {}
+          },
+          {
+            id: "12",
+            type: "DIRECTED",
+            toStatusReference: requireGeneratedStatusReference(
+              statusReferenceByName,
+              "In Progress"
+            ),
+            links: [link("User Testing")],
+            name: "User Testing Failed",
+            description:
+              "Human validation found remaining issues and implementation must continue.",
+            actions: [],
+            validators: [],
+            triggers: [],
+            properties: {}
+          },
+          {
+            id: "13",
+            type: "DIRECTED",
+            toStatusReference: requireGeneratedStatusReference(
+              statusReferenceByName,
+              "Done"
+            ),
+            links: [link("User Testing")],
             name: "Accepted",
             description: "",
+            actions: [],
+            validators: [],
+            triggers: [],
+            properties: {}
+          },
+          {
+            id: "14",
+            type: "DIRECTED",
+            toStatusReference: requireGeneratedStatusReference(
+              statusReferenceByName,
+              "Cancelled"
+            ),
+            links: [
+              link("To Do"),
+              link("Selected"),
+              link("In Progress"),
+              link("Blocked"),
+              link("In Review"),
+              link("QA"),
+              link("User Testing")
+            ],
+            name: "Cancel Work",
+            description:
+              "Stop the work item intentionally without treating it as completed delivery.",
             actions: [],
             validators: [],
             triggers: [],
@@ -296,11 +370,28 @@ export function buildCodexManagedWorkflowUpdate(input: {
               link("In Progress"),
               link("Blocked"),
               link("In Review"),
-              link("QA")
+              link("QA"),
+              link("User Testing")
             ],
             name: "Return To Do",
             description:
               "Return the item to backlog for re-planning or de-prioritization.",
+            actions: [],
+            validators: [],
+            triggers: [],
+            properties: {}
+          },
+          {
+            id: "15",
+            type: "DIRECTED",
+            toStatusReference: requireGeneratedStatusReference(
+              statusReferenceByName,
+              "To Do"
+            ),
+            links: [link("Cancelled")],
+            name: "Restore To Do",
+            description:
+              "Return cancelled work to backlog when the scope becomes active again.",
             actions: [],
             validators: [],
             triggers: [],

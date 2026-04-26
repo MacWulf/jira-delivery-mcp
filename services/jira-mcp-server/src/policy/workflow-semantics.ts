@@ -5,6 +5,7 @@ export type WorkflowSemantic =
   | "in_progress"
   | "review"
   | "qa"
+  | "human_testing"
   | "blocked"
   | "done"
   | "canceled"
@@ -19,6 +20,18 @@ export function inferWorkflowSemantic(input: {
 
   if (containsAny(name, ["cancel", "cancelled", "canceled", "wont do", "won't do"])) {
     return "canceled";
+  }
+
+  if (
+    containsAny(name, [
+      "user testing",
+      "uat",
+      "user acceptance",
+      "acceptance testing",
+      "manual validation"
+    ])
+  ) {
+    return "human_testing";
   }
 
   if (category === "done") {

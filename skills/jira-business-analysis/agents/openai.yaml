@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Business Analysis"
+  short_description: "Bounded discovery and requirement shaping for Jira work"
+  default_prompt: "Use jira-business-analysis to turn a vague ask into a bounded BA discovery, derive candidate acceptance criteria, and prepare Jira-ready scope without endless questioning."

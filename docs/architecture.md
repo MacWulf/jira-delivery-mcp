@@ -58,7 +58,9 @@ Responsibilities:
 - `pick_next_issue` never returns completed work.
 - `link_issues` requires an explicit link type.
 - Confluence writes are only enabled when the required configuration exists.
-- Live writes require explicit confirmation.
+- Daily delivery writes execute live by default.
+- Admin-risk writes require explicit confirmation when confirmation gates are enabled.
+- Explicit preview mode remains available through `JIRA_EXECUTION_MODE=dry-run`.
 
 ## Near-Term Extension Points
 

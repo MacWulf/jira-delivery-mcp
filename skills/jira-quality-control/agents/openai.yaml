@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Quality Control"
+  short_description: "Pre-dev test plans, validation work, bug evidence, and retest loops"
+  default_prompt: "Use -quality-control to create or update dedicated pre-dev test plan issues before coding, turn acceptance criteria into validation work, create directly traceable bugs when validation fails, and plan safe retests."

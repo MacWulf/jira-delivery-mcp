@@ -2,6 +2,7 @@ import {
   compareIssuesByPriority,
   type JiraIssueForSelection
 } from "./assistant-policy.js";
+import { buildDependencyImpactSummary } from "./dependency-impact-policy.js";
 import { inferWorkflowSemantic } from "./workflow-semantics.js";
 
 export type IssueExecutionOrdering = {
@@ -15,6 +16,9 @@ export type IssueExecutionOrdering = {
     | "other";
   roadmap: boolean;
   leafWork: boolean;
+  upstreamGate: boolean;
+  downstreamOpenBlockCount: number;
+  downstreamActiveBlockCount: number;
   issueTypeName?: string;
 };
 
@@ -43,6 +47,7 @@ export function buildExecutionOrdering(
 ): IssueExecutionOrdering {
   const labels = issue.fields?.labels ?? [];
   const issueTypeName = issue.fields?.issuetype?.name;
+  const dependencyImpact = buildDependencyImpactSummary(issue);
   const semantic = inferWorkflowSemantic({
     statusName: issue.fields?.status?.name,
     statusCategoryKey: issue.fields?.status?.statusCategory?.key
@@ -52,6 +57,9 @@ export function buildExecutionOrdering(
     statusBucket: mapSemanticToExecutionBucket(semantic),
     roadmap: labels.includes("capability-roadmap"),
     leafWork: Boolean(issue.fields?.parent?.key),
+    upstreamGate: dependencyImpact.upstreamGate,
+    downstreamOpenBlockCount: dependencyImpact.downstreamOpenBlockCount,
+    downstreamActiveBlockCount: dependencyImpact.activeDownstreamOpenBlockCount,
     ...(issueTypeName ? { issueTypeName } : {})
   };
 }
@@ -61,7 +69,7 @@ export function buildExecutionOrderingReason(
 ): string {
   const ordering = buildExecutionOrdering(issue);
 
-  return `Execution ordering: StatusBucket=${ordering.statusBucket}, CapabilityRoadmap=${ordering.roadmap}, LeafWork=${ordering.leafWork}, IssueType=${ordering.issueTypeName ?? "Unknown"}`;
+  return `Execution ordering: StatusBucket=${ordering.statusBucket}, CapabilityRoadmap=${ordering.roadmap}, LeafWork=${ordering.leafWork}, UpstreamGate=${ordering.upstreamGate}, DownstreamOpenBlockCount=${ordering.downstreamOpenBlockCount}, DownstreamActiveBlockCount=${ordering.downstreamActiveBlockCount}, IssueType=${ordering.issueTypeName ?? "Unknown"}`;
 }
 
 function scoreIssueForExecution(issue: JiraIssueForSelection): number {
@@ -98,6 +106,13 @@ function scoreIssueForExecution(issue: JiraIssueForSelection): number {
   if (ordering.leafWork) {
     score += 40;
   }
+
+  if (ordering.upstreamGate) {
+    score += 90;
+  }
+
+  score += ordering.downstreamOpenBlockCount * 15;
+  score += ordering.downstreamActiveBlockCount * 35;
 
   if (ordering.issueTypeName === "Epic") {
     score -= 40;

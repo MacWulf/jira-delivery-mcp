@@ -4,6 +4,7 @@ import { parseIssueExecutionMetadataFromDescription } from "../domain/issue-exec
 import { toolText } from "../lib/mcp.js";
 import { buildIssueDependencySnapshot, type IssueDependencySnapshot } from "../policy/dependency-policy.js";
 import { buildDependencyStatusSignals } from "../policy/dependency-status-policy.js";
+import { buildDependencyImpactSummary } from "../policy/dependency-impact-policy.js";
 import type { JiraIssueForSelection } from "../policy/assistant-policy.js";
 import type { JiraApi } from "../services/jira-api.js";
 
@@ -39,6 +40,9 @@ export function registerGetIssueTool(
           descriptionText: parsedExecutionData.descriptionText,
           executionMetadata: parsedExecutionData.executionMetadata,
           dependencyStatusSignals: buildDependencyStatusSignals(
+            issue as JiraIssueForSelection
+          ),
+          dependencyImpactSummary: buildDependencyImpactSummary(
             issue as JiraIssueForSelection
           ),
           dependencySnapshot: buildIssueDependencySnapshot(

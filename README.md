@@ -18,9 +18,16 @@ Use this project if you want an assistant to help with Jira work such as:
 ## What You Can Do Today
 
 - run a local MCP server for Jira and optional Confluence operations
+- publish repo-first project documentation into Confluence with duplicate-aware upsert behavior
+- plan Confluence governance, staleness review, metadata policy, and documentation index structure without unsafe admin writes
 - create, update, transition, comment on, and link Jira issues
 - inspect project workflow and derive lifecycle semantics from the real tenant
+- discover issue-type and field-policy capability before attempting admin changes
 - bootstrap starter backlog structure from a project brief
+- generate validation work from acceptance criteria with tenant-aware fallback
+- create bugs with structured evidence and linked parent impact
+- classify incoming change scope and plan controlled Jira mutations with audit-ready outputs
+- plan retest loops without hardcoding a workflow or status set
 - store execution metadata in issue descriptions and resolve it during execution
 - validate dependency state before picking or starting work
 
@@ -68,10 +75,10 @@ Minimum Jira configuration:
 Optional but useful:
 
 - `JIRA_DEFAULT_PROJECT_KEY`
-- `JIRA_VALIDATION_PROJECT_KEY`
 - `CONFLUENCE_BASE_URL`
 - `CONFLUENCE_EMAIL`
 - `CONFLUENCE_API_TOKEN` or `CONFLUENCE_API_TOKEN_DPAPI_FILE`
+- `CONFLUENCE_DEFAULT_SPACE_ID`
 
 See [Secret storage](./docs/secret-storage.md) for local secret-handling guidance.
 
@@ -103,9 +110,6 @@ npm run check
 npm run build
 npm run smoke
 npm run dev
-npm run validate:live
-npm run validate:skill-metadata
-npm run validate:dependencies
 ```
 
 ## Codex Skills
@@ -113,8 +117,11 @@ npm run validate:dependencies
 The repository also includes an optional Codex skill package under [`skills/`](./skills):
 
 - `jira-core`
+- `jira-business-analysis`
 - `jira-project-bootstrap`
 - `jira-intake-refinement`
+- `jira-quality-control`
+- `jira-documentation-publishing`
 - `jira-execution-loop`
 - `jira-workflow-admin`
 
@@ -124,13 +131,27 @@ These skills are designed to stay tenant-aware:
 - they should adapt to different Jira project models where possible
 - when a requested action cannot be completed safely through the available AI tooling or public APIs, they should tell the operator which manual Jira step is required
 
+To install the latest local Jira skill package and register the built MCP server in your Codex environment, run:
+
+```powershell
+.\scripts\install-codex-local.ps1
+```
+
+This script:
+
+- runs `npm run build`
+- syncs the Jira skills from [`skills/`](./skills) into `~/.codex/skills`
+- updates `~/.codex/config.toml` with a local `jiraDelivery` stdio MCP server that points to the built `services/jira-mcp-server/dist/index.js`
+
+Re-run it whenever you want the local Codex install to pick up new MCP or skill changes from this repository.
+
 ## Repository Structure
 
 ```text
-docs/                              Product, architecture, and operating documentation
+docs/                              Product and architecture documentation
 fixtures/                          Reusable project-brief examples
 scripts/                           Local helper utilities
-services/jira-mcp-server/          MCP server, Jira client, policies, and validation utilities
+services/jira-mcp-server/          MCP server, Jira client, policies, and tools
 skills/                            Optional Codex skill package
 ```
 
@@ -141,21 +162,23 @@ Start here:
 - [Architecture](./docs/architecture.md)
 - [Tool contracts](./docs/tool-contracts.md)
 - [Workflow policy](./docs/workflow-policy.md)
+- [Readiness policy](./docs/readiness-policy.md)
+- [Quality governance](./docs/quality-governance.md)
+- [Change control](./docs/change-control.md)
+- [Confluence publishing](./docs/confluence-publishing.md)
 - [Project bootstrap model](./docs/project-bootstrap-model.md)
 - [Dependency control](./docs/dependency-control.md)
 - [Secret storage](./docs/secret-storage.md)
 
 Additional references:
-
-- [Capability map](./docs/capability-map.md)
-- [Local skill validation](./docs/local-skill-testing.md)
 - [Project brief template](./fixtures/project-brief-template.md)
 - [Sample project brief](./fixtures/sample-project-brief.md)
 
 ## Security
 
-- write operations default to `dry-run`
-- live Jira writes require explicit confirmation
+- daily Jira and Confluence delivery writes execute live by default
+- only admin-risk writes require explicit confirmation
+- explicit preview mode is still available through `JIRA_EXECUTION_MODE=dry-run`
 - workflow changes should be validated before rollout
 - dependency logic is explicit and link-based
 - secrets should not be committed to the repository

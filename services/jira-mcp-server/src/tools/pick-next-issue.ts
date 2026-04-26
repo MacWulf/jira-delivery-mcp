@@ -12,11 +12,16 @@ import {
 } from "../policy/assistant-policy.js";
 import { buildIssueDependencySnapshot } from "../policy/dependency-policy.js";
 import { buildDependencyStatusSignals } from "../policy/dependency-status-policy.js";
+import { buildDependencyImpactSummary } from "../policy/dependency-impact-policy.js";
 import {
   buildExecutionOrdering,
   buildExecutionOrderingReason,
   compareIssuesForExecution
 } from "../policy/execution-selection-policy.js";
+import {
+  evaluateIssueReadiness,
+  summarizeReadinessFailures
+} from "../policy/readiness-policy.js";
 import type { JiraApi } from "../services/jira-api.js";
 
 const DEFAULT_FIELDS = [
@@ -69,11 +74,27 @@ export function registerPickNextIssueTool(
       const blockedIssues = candidateIssues.filter((issue) =>
         hasOpenBlockingDependency(issue)
       );
+      const readinessEvaluations = candidateIssues.map((issue) => ({
+        issue,
+        readiness: evaluateIssueReadiness(issue, "start")
+      }));
+      const notReadyIssues = readinessEvaluations
+        .filter(({ readiness }) => !readiness.passed)
+        .map(({ issue, readiness }) => ({
+          issueKey: issue.key,
+          summary: issue.fields?.summary,
+          readiness,
+          reason: summarizeReadinessFailures(readiness),
+          dependencyStatusSignals: buildDependencyStatusSignals(issue),
+          dependencyImpactSummary: buildDependencyImpactSummary(issue),
+          dependencySnapshot: buildIssueDependencySnapshot(issue)
+        }));
       const issues = candidateIssues
         .filter(
           (issue) =>
             !hasOpenBlockingDependency(issue) && !isWorkflowBlockedIssue(issue)
         )
+        .filter((issue) => evaluateIssueReadiness(issue, "start").passed)
         .sort(compareIssuesForExecution);
 
       const nextIssue = issues[0];
@@ -87,6 +108,7 @@ export function registerPickNextIssueTool(
               issueKey: issue.key,
               summary: issue.fields?.summary,
               dependencyStatusSignals: buildDependencyStatusSignals(issue),
+              dependencyImpactSummary: buildDependencyImpactSummary(issue),
               dependencySnapshot: buildIssueDependencySnapshot(issue)
             })),
             workflowBlockedCandidates: workflowBlockedIssues.map((issue) => ({
@@ -94,8 +116,10 @@ export function registerPickNextIssueTool(
               summary: issue.fields?.summary,
               executionOrdering: buildExecutionOrdering(issue),
               dependencyStatusSignals: buildDependencyStatusSignals(issue),
+              dependencyImpactSummary: buildDependencyImpactSummary(issue),
               dependencySnapshot: buildIssueDependencySnapshot(issue)
-            }))
+            })),
+            notReadyCandidates: notReadyIssues
           }
         };
       }
@@ -107,12 +131,14 @@ export function registerPickNextIssueTool(
           reason: `${buildIssueSelectionReason(nextIssue)}. ${buildExecutionOrderingReason(nextIssue)}`,
           executionOrdering: buildExecutionOrdering(nextIssue),
           dependencyStatusSignals: buildDependencyStatusSignals(nextIssue),
+          dependencyImpactSummary: buildDependencyImpactSummary(nextIssue),
           dependencySnapshot: buildIssueDependencySnapshot(nextIssue),
           blockedCandidates: blockedIssues.map((issue) => ({
             issueKey: issue.key,
             summary: issue.fields?.summary,
             executionOrdering: buildExecutionOrdering(issue),
             dependencyStatusSignals: buildDependencyStatusSignals(issue),
+            dependencyImpactSummary: buildDependencyImpactSummary(issue),
             dependencySnapshot: buildIssueDependencySnapshot(issue)
           })),
           workflowBlockedCandidates: workflowBlockedIssues.map((issue) => ({
@@ -120,8 +146,11 @@ export function registerPickNextIssueTool(
             summary: issue.fields?.summary,
             executionOrdering: buildExecutionOrdering(issue),
             dependencyStatusSignals: buildDependencyStatusSignals(issue),
+            dependencyImpactSummary: buildDependencyImpactSummary(issue),
             dependencySnapshot: buildIssueDependencySnapshot(issue)
           })),
+          notReadyCandidates: notReadyIssues,
+          readinessEvaluation: evaluateIssueReadiness(nextIssue, "start"),
           executionMetadata: parseIssueExecutionMetadataFromDescription(
             (nextIssue.fields as Record<string, unknown> | undefined)
               ?.description

@@ -19,14 +19,7 @@
     "build": "npm run build --workspace @jira-delivery-mcp/jira-mcp-server",
     "check": "npm run check --workspace @jira-delivery-mcp/jira-mcp-server",
     "dev": "npm run dev --workspace @jira-delivery-mcp/jira-mcp-server",
-    "smoke": "npm run smoke --workspace @jira-delivery-mcp/jira-mcp-server",
-    "validate:live": "npm run validate:live --workspace @jira-delivery-mcp/jira-mcp-server",
-    "validate:skill-metadata": "npm run validate:skill-metadata --workspace @jira-delivery-mcp/jira-mcp-server",
-    "validate:skill-metadata-demo": "npm run validate:skill-metadata-demo --workspace @jira-delivery-mcp/jira-mcp-server",
-    "validate:dependencies": "npm run validate:dependencies --workspace @jira-delivery-mcp/jira-mcp-server",
-    "validate:dependency-drift": "npm run validate:dependency-drift --workspace @jira-delivery-mcp/jira-mcp-server",
-    "seed:sample-roadmap": "npm run seed:sample-roadmap --workspace @jira-delivery-mcp/jira-mcp-server",
-    "validate:workflow-apply": "npm run validate:workflow-apply --workspace @jira-delivery-mcp/jira-mcp-server"
+    "smoke": "npm run smoke --workspace @jira-delivery-mcp/jira-mcp-server"
   },
   "engines": {
     "node": ">=24.0.0"

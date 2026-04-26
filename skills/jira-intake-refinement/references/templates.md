@@ -48,3 +48,4 @@ Description:
 - Split mixed tickets into separate issues.
 - Add parent links and dependencies.
 - Keep the item small enough to start work immediately.
+- For any item likely to require code changes, add `jira-quality-control` as the expected follow-up before implementation so a pre-dev test plan issue guides the coding work.

@@ -8,9 +8,8 @@ const envSchema = z.object({
   JIRA_API_TOKEN: z.string().min(1).optional(),
   JIRA_API_TOKEN_DPAPI_FILE: z.string().min(1).optional(),
   JIRA_DEFAULT_PROJECT_KEY: z.string().min(1).optional(),
-  JIRA_VALIDATION_PROJECT_KEY: z.string().min(1).optional(),
   JIRA_DEFAULT_PICK_NEXT_JQL: z.string().min(1).optional(),
-  JIRA_EXECUTION_MODE: z.enum(["dry-run", "live"]).default("dry-run"),
+  JIRA_EXECUTION_MODE: z.enum(["dry-run", "live"]).default("live"),
   JIRA_REQUIRE_CONFIRMATION: z.stringbool().default(true),
   JIRA_SELECTED_TRANSITION_NAMES: z.string().min(1).optional(),
   JIRA_IN_PROGRESS_TRANSITION_NAMES: z.string().min(1).optional(),
@@ -21,7 +20,8 @@ const envSchema = z.object({
   CONFLUENCE_BASE_URL: z.url().optional(),
   CONFLUENCE_EMAIL: z.email().optional(),
   CONFLUENCE_API_TOKEN: z.string().min(1).optional(),
-  CONFLUENCE_API_TOKEN_DPAPI_FILE: z.string().min(1).optional()
+  CONFLUENCE_API_TOKEN_DPAPI_FILE: z.string().min(1).optional(),
+  CONFLUENCE_DEFAULT_SPACE_ID: z.string().min(1).optional()
 });
 
 export type AppConfig = {
@@ -31,7 +31,6 @@ export type AppConfig = {
   executionMode: "dry-run" | "live";
   requireConfirmation: boolean;
   defaultProjectKey?: string;
-  validationProjectKey?: string;
   defaultPickNextJql?: string;
   selectedTransitionNames: string[];
   inProgressTransitionNames: string[];
@@ -42,6 +41,7 @@ export type AppConfig = {
   confluenceBaseUrl?: string;
   confluenceEmail?: string;
   confluenceApiToken?: string;
+  confluenceDefaultSpaceId?: string;
 };
 
 export function loadConfig(): AppConfig {
@@ -104,16 +104,16 @@ export function loadConfig(): AppConfig {
     config.defaultProjectKey = env.JIRA_DEFAULT_PROJECT_KEY;
   }
 
-  if (env.JIRA_VALIDATION_PROJECT_KEY) {
-    config.validationProjectKey = env.JIRA_VALIDATION_PROJECT_KEY;
-  }
-
   if (env.JIRA_DEFAULT_PICK_NEXT_JQL) {
     config.defaultPickNextJql = env.JIRA_DEFAULT_PICK_NEXT_JQL;
   }
 
   if (env.CONFLUENCE_BASE_URL) {
     config.confluenceBaseUrl = trimTrailingSlash(env.CONFLUENCE_BASE_URL);
+  }
+
+  if (env.CONFLUENCE_DEFAULT_SPACE_ID) {
+    config.confluenceDefaultSpaceId = env.CONFLUENCE_DEFAULT_SPACE_ID;
   }
 
   return config;

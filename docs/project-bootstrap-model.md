@@ -67,6 +67,7 @@ Planned extensions include:
 
 ## Safety Model
 
-- project bootstrap starts in `dry-run`
-- live creation requires `JIRA_EXECUTION_MODE=live` and explicit confirmation
+- project creation is an admin-risk write
+- project bootstrap requires explicit confirmation when confirmation gates are enabled
+- explicit preview mode remains available through `JIRA_EXECUTION_MODE=dry-run`
 - project creation is treated as a high-impact write operation

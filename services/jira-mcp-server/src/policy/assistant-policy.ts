@@ -1,4 +1,5 @@
 import { buildIssueDependencySnapshot } from "./dependency-policy.js";
+import { buildDependencyImpactSummary } from "./dependency-impact-policy.js";
 import { inferWorkflowSemantic } from "./workflow-semantics.js";
 
 export type JiraIssueForSelection = {
@@ -18,10 +19,20 @@ export type JiraIssueForSelection = {
     issuetype?: {
       name?: string;
     };
+    project?: {
+      key?: string;
+      name?: string;
+    };
     parent?: {
       key?: string;
     };
     description?: unknown;
+    comment?: {
+      total?: number;
+    };
+    worklog?: {
+      total?: number;
+    };
     issuelinks?: Array<{
       type?: {
         inward?: string;
@@ -123,10 +134,11 @@ export function buildIssueSelectionReason(issue: JiraIssueForSelection): string 
   });
   const priority = issue.fields?.priority?.name ?? "Unknown";
   const dependencySnapshot = buildIssueDependencySnapshot(issue);
+  const dependencyImpact = buildDependencyImpactSummary(issue);
   const blockers = dependencySnapshot.openBlockedBy.length;
   const downstreamOpenBlocks = dependencySnapshot.openBlocks.length;
 
-  return `Highest currently eligible priority. Status=${status}, Semantic=${semantic}, Priority=${priority}, OpenBlockerCount=${blockers}, DownstreamOpenBlockCount=${downstreamOpenBlocks}`;
+  return `Highest currently eligible priority. Status=${status}, Semantic=${semantic}, Priority=${priority}, OpenBlockerCount=${blockers}, DownstreamOpenBlockCount=${downstreamOpenBlocks}, DownstreamActiveCount=${dependencyImpact.activeDownstreamOpenBlockCount}. ${dependencyImpact.narrative[0]}`;
 }
 
 export function findTransitionByName(

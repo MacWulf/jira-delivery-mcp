@@ -29,6 +29,8 @@ This module defines a dependency-control operating model built around Jira issue
 - do not close issues when dependency state contradicts workflow policy
 - prefer startable work during next-issue selection
 - include dependency context in issue-selection reasoning
+- surface when a queued issue is an upstream gate for already active downstream work
+- let next-issue sequencing reward unblock impact, not only status bucket and priority
 
 ### Dependency Maintenance
 

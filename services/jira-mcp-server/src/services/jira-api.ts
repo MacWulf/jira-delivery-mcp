@@ -47,6 +47,7 @@ type JiraProjectResponse = {
   simplified?: boolean;
   style?: string;
   projectTypeKey?: string;
+  issueTypes?: JiraIssueTypeDefinition[];
 };
 
 type JiraProjectSearchResponse = {
@@ -55,6 +56,32 @@ type JiraProjectSearchResponse = {
     key?: string;
     name?: string;
   }>;
+};
+
+export type JiraIssueTypeDefinition = {
+  self?: string;
+  id?: string;
+  description?: string;
+  iconUrl?: string;
+  name?: string;
+  untranslatedName?: string;
+  subtask?: boolean;
+  avatarId?: number;
+  entityId?: string;
+  hierarchyLevel?: number;
+  scope?: {
+    type?: string;
+    project?: {
+      id?: string;
+    };
+  };
+};
+
+type JiraProjectIssueTypesResponse = {
+  startAt?: number;
+  maxResults?: number;
+  total?: number;
+  issueTypes?: JiraIssueTypeDefinition[];
 };
 
 export type JiraProjectStatusesResponse = Array<{
@@ -215,13 +242,64 @@ type JiraWorklogResponse = {
   self?: string;
 };
 
-type ConfluenceCreatePageResponse = {
-  id: string;
-  title: string;
-  _links?: {
-    webui?: string;
-    base?: string;
+export type JiraIssueTypeFieldDefinition = {
+  required?: boolean;
+  schema?: {
+    type?: string;
+    system?: string;
+    items?: string;
+    custom?: string;
+    customId?: number;
   };
+  name?: string;
+  key?: string;
+  fieldId?: string;
+  hasDefaultValue?: boolean;
+  operations?: string[];
+  typeDisplayName?: string;
+  description?: string;
+};
+
+type JiraIssueTypeCreateMetaResponse = {
+  startAt?: number;
+  maxResults?: number;
+  total?: number;
+  fields?: JiraIssueTypeFieldDefinition[];
+};
+
+export type JiraFieldDefinition = {
+  id?: string;
+  key?: string;
+  name?: string;
+  description?: string;
+  typeDisplayName?: string;
+  schema?: {
+    type?: string;
+    system?: string;
+    items?: string;
+    custom?: string;
+    customId?: number;
+  };
+  required?: boolean;
+  hasDefaultValue?: boolean;
+  operations?: string[];
+  fieldId?: string;
+};
+
+type JiraFieldSearchResponse = {
+  values?: JiraFieldDefinition[];
+  startAt?: number;
+  maxResults?: number;
+  total?: number;
+  isLast?: boolean;
+};
+
+export type JiraCustomFieldCreateResponse = {
+  id?: string;
+  key?: string;
+  name?: string;
+  description?: string;
+  schema?: JiraFieldDefinition["schema"];
 };
 
 export class JiraApi {
@@ -343,6 +421,112 @@ export class JiraApi {
       `/rest/api/3/issuetypescheme/project?projectId=${encodeURIComponent(projectId)}`,
       {
         method: "GET"
+      }
+    );
+  }
+
+  async getProjectIssueTypes(
+    projectKey: string
+  ): Promise<JiraProjectIssueTypesResponse> {
+    return this.jiraRequest<JiraProjectIssueTypesResponse>(
+      `/rest/api/3/issue/createmeta/${encodeURIComponent(projectKey)}/issuetypes`,
+      {
+        method: "GET"
+      }
+    );
+  }
+
+  async getIssueTypeCreateMeta(input: {
+    projectKey: string;
+    issueTypeId: string;
+    maxResults?: number;
+  }): Promise<JiraIssueTypeCreateMetaResponse> {
+    const searchParams = new URLSearchParams();
+
+    if (input.maxResults !== undefined) {
+      searchParams.set("maxResults", String(input.maxResults));
+    }
+
+    const suffix = searchParams.toString()
+      ? `?${searchParams.toString()}`
+      : "";
+
+    return this.jiraRequest<JiraIssueTypeCreateMetaResponse>(
+      `/rest/api/3/issue/createmeta/${encodeURIComponent(
+        input.projectKey
+      )}/issuetypes/${encodeURIComponent(input.issueTypeId)}${suffix}`,
+      {
+        method: "GET"
+      }
+    );
+  }
+
+  async searchFields(input?: {
+    query?: string;
+    startAt?: number;
+    maxResults?: number;
+  }): Promise<JiraFieldSearchResponse> {
+    const searchParams = new URLSearchParams();
+
+    if (input?.query) {
+      searchParams.set("query", input.query);
+    }
+
+    if (input?.startAt !== undefined) {
+      searchParams.set("startAt", String(input.startAt));
+    }
+
+    if (input?.maxResults !== undefined) {
+      searchParams.set("maxResults", String(input.maxResults));
+    }
+
+    const suffix = searchParams.toString()
+      ? `?${searchParams.toString()}`
+      : "";
+
+    return this.jiraRequest<JiraFieldSearchResponse>(
+      `/rest/api/3/field/search${suffix}`,
+      {
+        method: "GET"
+      }
+    );
+  }
+
+  async createIssueType(input: {
+    name: string;
+    description?: string;
+    type?: "standard" | "subtask";
+    hierarchyLevel?: number;
+  }): Promise<JiraIssueTypeDefinition> {
+    return this.jiraRequest<JiraIssueTypeDefinition>("/rest/api/3/issuetype", {
+      method: "POST",
+      body: JSON.stringify({
+        name: input.name,
+        type: input.type ?? "standard",
+        ...(input.description ? { description: input.description } : {}),
+        ...(input.hierarchyLevel !== undefined
+          ? { hierarchyLevel: input.hierarchyLevel }
+          : {})
+      })
+    });
+  }
+
+  async createCustomField(input: {
+    name: string;
+    description?: string;
+    type: string;
+    searcherKey: string;
+  }): Promise<JiraCustomFieldCreateResponse> {
+    return this.jiraRequest<JiraCustomFieldCreateResponse>(
+      "/rest/api/3/field",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: input.name,
+          type: input.type,
+          searcherKey: input.searcherKey,
+          ...(input.description ? { description: input.description } : {})
+        })
       }
     );
   }
@@ -569,34 +753,6 @@ export class JiraApi {
     );
   }
 
-  async createDocPage(input: {
-    spaceId: string;
-    title: string;
-    bodyStorage: string;
-    parentId?: string;
-  }): Promise<ConfluenceCreatePageResponse> {
-    const baseUrl =
-      this.config.confluenceBaseUrl ?? `${this.config.jiraBaseUrl}/wiki`;
-
-    return this.confluenceRequest<ConfluenceCreatePageResponse>(
-      baseUrl,
-      "/api/v2/pages",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          spaceId: input.spaceId,
-          status: "current",
-          title: input.title,
-          parentId: input.parentId,
-          body: {
-            representation: "storage",
-            value: input.bodyStorage
-          }
-        })
-      }
-    );
-  }
-
   async searchProjectStatuses(projectId: string): Promise<JiraStatusSearchResponse> {
     return this.jiraRequest<JiraStatusSearchResponse>(
       `/rest/api/3/statuses/search?projectId=${encodeURIComponent(projectId)}&maxResults=100`,
@@ -706,24 +862,6 @@ export class JiraApi {
         Authorization: basicAuthHeader(
           this.config.jiraEmail,
           this.config.jiraApiToken
-        ),
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    });
-  }
-
-  private confluenceRequest<T>(
-    baseUrl: string,
-    path: string,
-    init: RequestInit
-  ): Promise<T> {
-    return requestJson<T>(`${baseUrl}${path}`, {
-      ...init,
-      headers: {
-        Authorization: basicAuthHeader(
-          this.config.confluenceEmail ?? this.config.jiraEmail,
-          this.config.confluenceApiToken ?? this.config.jiraApiToken
         ),
         Accept: "application/json",
         "Content-Type": "application/json"

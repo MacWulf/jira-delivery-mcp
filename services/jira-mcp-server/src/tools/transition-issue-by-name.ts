@@ -2,16 +2,17 @@ import { z } from "zod";
 
 import type { AppConfig } from "../config.js";
 import { toolText } from "../lib/mcp.js";
-import { findTransitionByName } from "../policy/assistant-policy.js";
 import {
   buildDryRunResult,
   ensureWriteAllowed
 } from "../policy/write-policy.js";
+import type { JiraAssistantService } from "../services/jira-assistant-service.js";
 import type { JiraApi } from "../services/jira-api.js";
 
 export function registerTransitionIssueByNameTool(
   server: { registerTool: Function },
   jiraApi: JiraApi,
+  assistantService: JiraAssistantService,
   config: AppConfig
 ) {
   server.registerTool(
@@ -33,17 +34,10 @@ export function registerTransitionIssueByNameTool(
       comment?: string;
       confirm?: boolean;
     }) => {
-      const transitions = await jiraApi.getTransitions(input.issueKey);
-      const transition = findTransitionByName(
-        transitions.transitions,
+      const plan = await assistantService.planTransitionIssueByName(
+        input.issueKey,
         input.transitionName
       );
-
-      if (!transition) {
-        throw new Error(
-          `Transition '${input.transitionName}' is not available for ${input.issueKey}.`
-        );
-      }
 
       const writeMode = ensureWriteAllowed(
         config,
@@ -54,12 +48,10 @@ export function registerTransitionIssueByNameTool(
       if (writeMode.mode === "dry-run") {
         return {
           ...toolText(
-            `Dry-run: would transition ${input.issueKey} to ${transition.name}.`
+            `Dry-run: would transition ${input.issueKey} to ${plan.transitionName}.`
           ),
           structuredContent: buildDryRunResult("transition_issue", {
-            issueKey: input.issueKey,
-            transitionId: transition.id,
-            transitionName: transition.name,
+            ...plan,
             comment: input.comment
           })
         };
@@ -71,7 +63,7 @@ export function registerTransitionIssueByNameTool(
         comment?: string;
       } = {
         issueKey: input.issueKey,
-        transitionId: transition.id
+        transitionId: plan.transitionId
       };
 
       if (input.comment) {
@@ -81,12 +73,8 @@ export function registerTransitionIssueByNameTool(
       await jiraApi.transitionIssue(payload);
 
       return {
-        ...toolText(`Transitioned ${input.issueKey} to ${transition.name}.`),
-        structuredContent: {
-          issueKey: input.issueKey,
-          transitionId: transition.id,
-          transitionName: transition.name
-        }
+        ...toolText(`Transitioned ${input.issueKey} to ${plan.transitionName}.`),
+        structuredContent: plan
       };
     }
   );

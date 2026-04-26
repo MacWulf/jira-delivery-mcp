@@ -7,6 +7,7 @@ export type DependencyStatusSignal = {
     | "blocked_waiting"
     | "blocked_active_work"
     | "upstream_gate"
+    | "downstream_active_waiting"
     | "aligned";
   severity: "info" | "warning";
   message: string;
@@ -57,6 +58,20 @@ export function buildDependencyStatusSignals(
       severity: "info",
       message:
         "Issue is an upstream gate for open dependent work. Prioritizing it may unlock additional executable items.",
+      recommendedStatusSemantic: "in_progress"
+    });
+  }
+
+  if (
+    snapshot.activeOpenBlocks.length > 0 &&
+    semantic !== "done" &&
+    semantic !== "canceled"
+  ) {
+    signals.push({
+      code: "downstream_active_waiting",
+      severity: "info",
+      message:
+        "Active downstream work is already waiting on this issue, so status and priority should reflect that unblock responsibility.",
       recommendedStatusSemantic: "in_progress"
     });
   }
