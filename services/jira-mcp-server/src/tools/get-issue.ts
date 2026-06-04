@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import { parseIssueExecutionMetadataFromDescription } from "../domain/issue-execution-metadata.js";
+import { evaluateArchitectActivation } from "../domain/architect-activation.js";
+import { parseIssueStructuredMetadataFromDescription } from "../domain/issue-structured-metadata.js";
 import { toolText } from "../lib/mcp.js";
 import { buildIssueDependencySnapshot, type IssueDependencySnapshot } from "../policy/dependency-policy.js";
 import { buildDependencyStatusSignals } from "../policy/dependency-status-policy.js";
@@ -29,7 +30,7 @@ export function registerGetIssueTool(
       const issue = await jiraApi.getIssue(input.issueKey, input.fields);
       const issueFields =
         (issue.fields as Record<string, unknown> | undefined) ?? {};
-      const parsedExecutionData = parseIssueExecutionMetadataFromDescription(
+      const parsedMetadata = parseIssueStructuredMetadataFromDescription(
         issueFields.description
       );
 
@@ -37,8 +38,27 @@ export function registerGetIssueTool(
         ...toolText(`Fetched issue ${input.issueKey}.`),
         structuredContent: {
           issue,
-          descriptionText: parsedExecutionData.descriptionText,
-          executionMetadata: parsedExecutionData.executionMetadata,
+          descriptionText: parsedMetadata.descriptionText,
+          executionMetadata: parsedMetadata.executionMetadata,
+          architectureMetadata: parsedMetadata.architectureMetadata,
+          architectActivation: evaluateArchitectActivation({
+            ...(typeof issueFields.summary === "string"
+              ? { summary: issueFields.summary }
+              : {}),
+            ...(parsedMetadata.descriptionText
+              ? { descriptionText: parsedMetadata.descriptionText }
+              : {}),
+            ...(Array.isArray(issueFields.labels)
+              ? {
+                  labels: issueFields.labels.filter(
+                    (value): value is string => typeof value === "string"
+                  )
+                }
+              : {}),
+            ...(parsedMetadata.architectureMetadata
+              ? { architectureMetadata: parsedMetadata.architectureMetadata }
+              : {})
+          }),
           dependencyStatusSignals: buildDependencyStatusSignals(
             issue as JiraIssueForSelection
           ),

@@ -1,6 +1,6 @@
 {
   "name": "@jira-delivery-mcp/jira-mcp-server",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Local Jira MCP server for Jira Delivery MCP.",
   "license": "MIT",
@@ -10,7 +10,8 @@
     "build": "tsc -p tsconfig.json",
     "check": "tsc --noEmit -p tsconfig.json",
     "dev": "tsx src/index.ts",
-    "smoke": "tsx src/smoke.ts"
+    "smoke": "tsx src/smoke.ts",
+    "test": "tsx --test src/domain/*.test.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.28.0",

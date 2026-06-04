@@ -1,6 +1,6 @@
 ---
 name: jira-quality-control
-description: Use for any Jira-scoped development, repair, bugfix, refactor, behavior change, or implementation work that should be guided by tests before coding. Also use when the task is about pre-development test planning, existing test coverage review, acceptance-criteria-derived test cases, validation work, bug evidence, retest loops, edge cases, negative paths, or quality fallback planning in a tenant-aware Jira setup. Use as a companion to jira-execution-loop before code changes start.
+description: Use for any Jira-scoped development, repair, bugfix, refactor, behavior change, or implementation work that should be guided by tests before coding. Also use when the task is about pre-development test planning, existing test coverage review, acceptance-criteria-derived test cases, validation work, bug evidence, retest loops, edge cases, negative paths, or quality fallback planning in a tenant-aware Jira setup. Use as a companion to jira-execution-loop before code changes start. When tests or validation depend on architecture constraints, ADR decisions, medium refactor scope, contradiction risk, affected-work blocking, or bounded spike evidence, use jira-architect as the decision companion.
 ---
 
 # Jira Quality Control
@@ -40,6 +40,7 @@ Do not require the user to explicitly say "test", "QA", or "validation". If code
 
 1. Read the parent issue and the acceptance criteria.
    Use the current issue content, tenant model, and workflow semantics before choosing a quality action.
+   If acceptance depends on architecture constraints, ADR status, affected-work blocking, or bounded spike evidence, use `$jira-architect` before finalizing the quality plan.
 2. Plan test coverage before development or repair starts.
    For new work or fixes, inspect the parent issue and any known existing test coverage first. Create or update a dedicated pre-dev test plan issue before implementation begins. The test plan should guide the coding assistant toward the expected behavior, likely failure modes, edge cases, and existing tests that must be reused or changed.
 3. Confirm active delivery state when implementation is already underway.
@@ -114,6 +115,7 @@ If `update_issue` is unavailable in the active runtime, treat the tool surface a
 - The bug description or handoff note must state which acceptance criterion or expected behavior was violated.
 - Treat missing direct links to the violated issue or issues as incomplete quality traceability.
 - If issue-type or field-policy changes are required, hand off to `$jira-workflow-admin`.
+- If validation reveals an architecture contradiction or missing hard constraint, hand off to `$jira-architect` before creating broad bug or retest work.
 
 ## Companion Skills
 
@@ -121,6 +123,8 @@ If `update_issue` is unavailable in the active runtime, treat the tool surface a
   Use for routing and tenant-aware baseline behavior.
 - `$jira-intake-refinement`
   Use for issue shaping, classification, and readiness.
+- `$jira-architect`
+  Use for architecture constraints, ADR status, decision-risk coverage, proportional blocking, and bounded spike evidence that validation depends on.
 - `$jira-business-analysis`
   Use when test cases need to be derived from business goals, stakeholder expectations, or underspecified acceptance criteria.
 - `$jira-execution-loop`

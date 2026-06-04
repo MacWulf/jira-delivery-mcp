@@ -9,6 +9,7 @@ Build the interview plan before deeper questioning.
 - current state
 - target state and scope
 - constraints and risks
+- architecture decision signals when the request touches kickoff, refactor, system boundaries, ADRs, or hard technical constraints
 - derived acceptance direction
 
 ## Planning rules
@@ -30,6 +31,7 @@ Discovery can stop when:
 - current and target state are clear at a useful level
 - scope can be split into in-scope and out-of-scope
 - remaining uncertainty can be captured as open questions
+- architecture-significant uncertainty is either handed to `jira-architect` or captured as bounded spike risk
 
 Default ceiling:
 - at most 3 major rounds

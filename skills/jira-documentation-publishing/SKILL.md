@@ -1,6 +1,6 @@
 ---
 name: jira-documentation-publishing
-description: Use when the task is about publishing repo-first project documentation into Confluence or planning Confluence governance in an admin-safe way.
+description: Use when the task is about publishing repo-first project documentation into Confluence or planning Confluence governance in an admin-safe way. When the documentation is an architecture decision, ADR, architecture taxonomy, hard constraint, rejected alternative, or affected-work summary, use jira-architect for the decision and content contract, then handle Confluence publishing mechanics here.
 ---
 
 # Jira Documentation Publishing
@@ -106,6 +106,7 @@ Do not leave long-lived pages in a vague permanent `review needed` state once th
    Publish from repo and Jira evidence. Do not invent a Confluence-only truth model.
 2. Resolve the target document type first.
    Use `kickoff-summary`, `project-status-update`, or `implementation-note` before writing.
+   For ADR or architecture decision content, use `$jira-architect` first to decide status, hard constraints, rejected alternatives, affected scope, review mode, and Jira sync expectations.
 3. Search before creating.
    Use the duplicate-aware page identity flow so the assistant does not create parallel pages for the same document.
 4. Preserve traceability.
@@ -155,11 +156,14 @@ Do not leave long-lived pages in a vague permanent `review needed` state once th
 - If Confluence-native governance is required, return manual-step guidance instead of pretending native admin support exists.
 - If the current space structure feels like a machine-generated dump, improve the information architecture before calling the documentation finished.
 - If outdated or orphaned pages remain in the primary navigation path, surface them as cleanup work instead of ignoring them.
+- Do not decide architecture inside this skill. For ADR content and architecture constraints, use `$jira-architect`; this skill owns publishing mechanics and Confluence governance behavior.
 
 ## Companion Skills
 
 - `$jira-core`
   Use for routing and mixed Jira/Confluence flows.
+- `$jira-architect`
+  Use for ADR decisions, architecture page contracts, rejected alternatives, hard constraints, affected Jira summaries, and proportional blocking rules before publishing.
 - `$jira-project-bootstrap`
   Use when project kickoff docs should follow bootstrap work.
 - `$jira-execution-loop`

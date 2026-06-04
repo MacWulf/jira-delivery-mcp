@@ -9,6 +9,7 @@ The first slice should prove the project can move from idea to working delivery.
 ## Good First Slices
 
 - Project setup and foundations
+- Architecture foundation and first ADR when kickoff or structural choices affect implementation
 - Authentication or access path
 - Core workflow or primary user journey
 - First production-facing integration
@@ -27,9 +28,9 @@ Each slice should have:
 - one visible outcome
 - a small number of linked tickets
 - a clear dependency chain
+- architecture constraints or an explicit note that no architecture gate applies
 - a sensible "done" definition
 
 ## Bootstrap Check
 
 If the first slice cannot be explained in one paragraph, it is too large.
-

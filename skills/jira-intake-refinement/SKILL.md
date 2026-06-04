@@ -1,6 +1,6 @@
 ---
 name: jira-intake-refinement
-description: Use when the task is to classify, shape, split, or clean Jira backlog items. This skill defines issue typing, parent-child expectations, readiness rules, and backlog hygiene. When a refined item is likely to require implementation, bugfixing, refactoring, integration, automation, API, UI, backend, frontend, or behavior-changing work, mark jira-quality-control as the expected follow-up so pre-dev test planning happens before coding.
+description: Use when the task is to classify, shape, split, or clean Jira backlog items. This skill defines issue typing, parent-child expectations, readiness rules, and backlog hygiene. When a refined item is likely to require implementation, bugfixing, refactoring, integration, automation, API, UI, backend, frontend, or behavior-changing work, mark jira-quality-control as the expected follow-up so pre-dev test planning happens before coding. When refinement detects medium-or-larger refactor, cross-boundary change, ADR need, hard constraint, contradiction, or bounded spike need, mark jira-architect as the architecture decision companion.
 ---
 
 # Jira Intake Refinement
@@ -35,6 +35,8 @@ Apply these rules unless the project has an explicit, documented alternative:
 
 If an item has no user value and no defect behavior, it is usually a task, not a story.
 
+If an item is a medium-or-larger refactor or equivalent architecture-impacting change, do not refine it as ordinary implementation only. Route `$jira-architect` for decision level, ADR need, affected-work scope, and hard constraints.
+
 ## Intake Workflow
 
 1. Inspect the project conventions.
@@ -46,6 +48,7 @@ If an item has no user value and no defect behavior, it is usually a task, not a
 4. Define ready-to-build content.
    Add a clear summary, problem context, goal, acceptance criteria, dependencies, and key assumptions.
    If the item is likely to require code changes, record `$jira-quality-control` as the next companion skill so a pre-dev test plan issue is created or updated before implementation.
+   If the item crosses module, service, storage, integration, API, auth, workflow, data-flow, or deployment boundaries, record `$jira-architect` as the decision companion before implementation.
 5. Split oversized work.
    If an item has multiple unrelated outcomes or cannot be completed in one focused delivery cycle, split it.
 6. Reject weak tickets.

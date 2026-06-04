@@ -1,5 +1,5 @@
 import { parseAcceptanceCriteriaFromText } from "../domain/acceptance-criteria.js";
-import { parseIssueExecutionMetadataFromDescription } from "../domain/issue-execution-metadata.js";
+import { parseIssueStructuredMetadataFromDescription } from "../domain/issue-structured-metadata.js";
 import { inferWorkflowSemantic } from "./workflow-semantics.js";
 import {
   buildIssueDependencySnapshot,
@@ -59,7 +59,7 @@ export function evaluateIssueReadiness(
 ): IssueReadinessEvaluation {
   const issueTypeName = issue.fields?.issuetype?.name;
   const kind = classifyIssueReadinessKind(issue);
-  const descriptionData = parseIssueExecutionMetadataFromDescription(
+  const descriptionData = parseIssueStructuredMetadataFromDescription(
     issue.fields?.description
   );
   const acceptanceCriteria = parseAcceptanceCriteriaFromText(
@@ -102,6 +102,15 @@ export function evaluateIssueReadiness(
               .map((item) => item.issueKey)
               .join(", ")}`
           : undefined
+      )
+    );
+    checks.push(
+      buildCheck(
+        "no-architecture-block",
+        "Issue is not blocked by an active architecture decision gap.",
+        !descriptionData.architectureMetadata?.architectureBlockReason,
+        "error",
+        descriptionData.architectureMetadata?.architectureBlockReason
       )
     );
   }

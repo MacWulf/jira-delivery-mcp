@@ -5,17 +5,17 @@ Use short, single-purpose questions.
 ## Good patterns
 
 - Domain:
-  `Melyik uzleti teruletet erinti ez a keres a leginkabb?`
+  `Which business area does this request affect most?`
 - Problem:
-  `Mi a legfobb gond a mostani mukodessel?`
+  `What is the main problem with the current process?`
 - Stakeholder presence:
-  `Van rajtad kivul mas erdemi resztvevo is a projektben vagy a dontesben, vagy ezt lenyegeben egy ember viszi?`
+  `Besides you, is there another meaningful participant in the project or decision, or is this essentially owned by one person?`
 - Current state:
-  `Ma ezt hogyan oldjatok meg?`
+  `How do you handle this today?`
 - Scope:
-  `Mi az a legkisebb eredmeny, amitol ez mar hasznos lenne?`
+  `What is the smallest outcome that would make this useful?`
 - Constraint:
-  `Van olyan korlat, ami ezt a megoldast eleve szukiti?`
+  `Is there any constraint that already narrows the solution?`
 
 ## When to add a suggestion
 
@@ -26,7 +26,7 @@ Add a short suggestion only when it materially helps, for example:
 - backlog handoff format choice
 
 Example:
-`Ha jol ertem, ez inkabb belso folyamatfejlesztes, nem uj termekfeature. Jol latom?`
+`If I understand correctly, this is more internal process improvement than a new product feature. Is that right?`
 
 ## Avoid
 

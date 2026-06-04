@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Architect"
+  short_description: "Architecture decisions for Jira delivery"
+  default_prompt: "Use $jira-architect to decide architecture, create ADRs, sync Jira and Confluence, and route downstream Jira skills."

@@ -98,6 +98,29 @@ export function renderExecutionMetadataBlock(
   return lines.join("\n");
 }
 
+export function toIssueExecutionMetadataInput(
+  metadata: IssueExecutionMetadata | undefined
+): IssueExecutionMetadataInput | undefined {
+  if (!metadata) {
+    return undefined;
+  }
+
+  return {
+    ...(metadata.requiredSkills.length
+      ? {
+          requiredSkills: metadata.requiredSkills.map((item) => item.value)
+        }
+      : {}),
+    ...(metadata.optionalSkills.length
+      ? {
+          optionalSkills: metadata.optionalSkills.map((item) => item.value)
+        }
+      : {}),
+    ...(metadata.executionMode ? { executionMode: metadata.executionMode } : {}),
+    ...(metadata.notes.length ? { notes: [...metadata.notes] } : {})
+  };
+}
+
 export function stripExecutionMetadataSection(text: string): string {
   const normalized = normalizeLineEndings(text);
   const lines = normalized.split("\n");

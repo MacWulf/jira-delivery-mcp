@@ -1,8 +1,14 @@
 import type { AppConfig } from "../config.js";
 import {
-  parseIssueExecutionMetadataFromDescription,
-  type IssueExecutionMetadata
-} from "../domain/issue-execution-metadata.js";
+  evaluateArchitectActivation,
+  mergeArchitectRequiredSkill,
+  type ArchitectActivationAssessment
+} from "../domain/architect-activation.js";
+import {
+  parseIssueStructuredMetadataFromDescription
+} from "../domain/issue-structured-metadata.js";
+import type { ArchitectIssueMetadata } from "../domain/issue-architecture-metadata.js";
+import type { IssueExecutionMetadata } from "../domain/issue-execution-metadata.js";
 import {
   findTransitionByName,
   hasOpenBlockingDependency,
@@ -41,6 +47,8 @@ export type TransitionPlan = {
   dependencyStatusSignals: DependencyStatusSignal[];
   dependencyImpactSummary: DependencyImpactSummary;
   executionMetadata?: IssueExecutionMetadata;
+  architectureMetadata?: ArchitectIssueMetadata;
+  architectActivation?: ArchitectActivationAssessment;
   requiredSkills: string[];
   optionalSkills: string[];
   readinessEvaluation: IssueReadinessEvaluation;
@@ -274,9 +282,22 @@ export class JiraAssistantService {
     transition: JiraTransition,
     stage?: IssueReadinessStage
   ): TransitionPlan {
-    const executionData = parseIssueExecutionMetadataFromDescription(
+    const executionData = parseIssueStructuredMetadataFromDescription(
       issue.fields?.description
     );
+    const architectActivation = evaluateArchitectActivation({
+      ...(issue.fields?.summary ? { summary: issue.fields.summary } : {}),
+      ...(executionData.descriptionText
+        ? { descriptionText: executionData.descriptionText }
+        : {}),
+      ...(issue.fields?.labels ? { labels: issue.fields.labels } : {}),
+      ...(issue.fields?.issuetype?.name
+        ? { issueTypeName: issue.fields.issuetype.name }
+        : {}),
+      ...(executionData.architectureMetadata
+        ? { architectureMetadata: executionData.architectureMetadata }
+        : {})
+    });
     const readinessEvaluation = evaluateIssueReadiness(
       issue,
       stage ?? inferReadinessStageFromTransitionName(transition),
@@ -291,16 +312,24 @@ export class JiraAssistantService {
       dependencySnapshot: buildIssueDependencySnapshot(issue),
       dependencyStatusSignals: buildDependencyStatusSignals(issue),
       dependencyImpactSummary: buildDependencyImpactSummary(issue),
-      requiredSkills:
+      requiredSkills: mergeArchitectRequiredSkill(
         executionData.executionMetadata?.requiredSkills.map((item) => item.value) ??
-        [],
+          [],
+        architectActivation
+      ),
       optionalSkills:
         executionData.executionMetadata?.optionalSkills.map((item) => item.value) ??
         [],
       readinessEvaluation,
+      ...(architectActivation.shouldActivate
+        ? { architectActivation }
+        : {}),
       ...(issue.fields?.summary ? { summary: issue.fields.summary } : {}),
       ...(executionData.executionMetadata
         ? { executionMetadata: executionData.executionMetadata }
+        : {}),
+      ...(executionData.architectureMetadata
+        ? { architectureMetadata: executionData.architectureMetadata }
         : {})
     };
   }

@@ -5,6 +5,7 @@ This skill package should behave like a small Jira operating system, not a singl
 ## Roles
 
 - `jira-core`: route the request and select the right working mode.
+- `jira-architect`: decide architecture, create or update ADRs, set hard constraints, block affected work proportionally, and route downstream work to the owning Jira skills.
 - `jira-business-analysis`: run bounded discovery, requirement shaping, and stakeholder-aware BA handoff before backlog execution.
 - `jira-project-bootstrap`: turn a brief into a Jira project shape, starter backlog, and first delivery slice.
 - `jira-intake-refinement`: classify, shape, and ready backlog items.
@@ -19,11 +20,13 @@ Before acting, determine which of these is true:
 
 - A new project is being bootstrapped from a brief or repo.
 - New work is being proposed or cleaned up.
+- Architecture decision work is required: kickoff architecture foundation, medium-or-larger refactor, ADR lifecycle, hard constraint, cross-boundary change, contradiction, affected-work blocking, or bounded spike.
 - Validation work, bug evidence, retest planning, or code-changing implementation is being shaped.
 - Existing work is being executed.
 - Jira configuration is being changed.
 
 Then hand off to the narrowest skill that can handle the task.
+For architecture-significant work, combine the relevant delivery skill with `jira-architect` before coding or backlog shape is treated as settled.
 For code-changing Jira work, combine the execution skill with `jira-quality-control` even when the user did not mention tests.
 For project bootstrap, do not stop after backlog seeding when the new backlog contains behavior-changing delivery work. Route those delivery issues to `jira-quality-control` and create or require linked pre-dev test plan issues before ending the turn.
 
@@ -34,6 +37,7 @@ Every meaningful Jira action should leave a useful audit trail:
 - clear issue summary
 - concise description
 - acceptance criteria or repro steps where needed
+- architecture decision link, hard constraints, and affected-work summary when `jira-architect` applies
 - a linked pre-dev test plan for code-changing work, or an explicit reason why an existing linked test plan is already current and sufficient
 - dependency links when relevant
 - structured evidence or validation notes when quality work is involved
@@ -64,6 +68,7 @@ The Jira skill set should behave like a small professional delivery team:
 - activate the issue before substantive implementation starts
 - leave a concise progress trace
 - run the validations the assistant can really perform
+- resolve any mandatory architecture gate through `jira-architect` before treating affected implementation as unblocked
 - attach or summarize the evidence that supports advancement
 - move the issue to the next valid workflow state
 - continue until a real blocker appears
@@ -72,6 +77,7 @@ Valid stopping points are:
 
 - evidence is insufficient
 - a dependency or policy block remains open
+- a mandatory architecture decision, ADR conflict, or bounded spike remains unresolved for affected work
 - Jira does not expose a safe transition for the next move
 - the issue has reached an explicit human gate
 - the issue has reached `Done`

@@ -1,5 +1,13 @@
 import type { AppConfig } from "../config.js";
 import {
+  buildArchitectDecisionRecordPage,
+  type ArchitectDecisionRecordInput
+} from "../domain/architect-decision-record.js";
+import {
+  buildArchitectDecisionSafetyPlan,
+  type ArchitectDecisionSafetyPlan
+} from "../domain/architect-decision-safety.js";
+import {
   buildProjectDocTemplate,
   buildProjectDocTitle,
   type ProjectDocSourceReference,
@@ -62,6 +70,44 @@ export type EnsureProjectDocPageResult = ProjectDocPagePlan & {
   };
 };
 
+export type ArchitectAdrPagePlan = {
+  title: string;
+  summary: string;
+  labels: string[];
+  spaceId: string;
+  parentId?: string;
+  taxonomyHints: string[];
+  bodyStoragePreview: string;
+  pageIdentity: {
+    spaceId: string;
+    title: string;
+    parentId?: string;
+  };
+  candidatePages: Array<{
+    id: string;
+    title: string;
+    parentId?: string;
+    version?: number;
+    webUrl?: string;
+  }>;
+  upsertDecision: {
+    action: "create" | "update" | "manual_step_required";
+    notes: string[];
+    targetPageId?: string;
+  };
+  safetyPlan: ArchitectDecisionSafetyPlan;
+};
+
+export type EnsureArchitectAdrPageResult = ArchitectAdrPagePlan & {
+  action: "created" | "updated" | "manual_step_required";
+  page?: {
+    id: string;
+    title: string;
+    version?: number;
+    webUrl?: string;
+  };
+};
+
 export class DocumentPublishingService {
   constructor(
     private readonly confluenceApi: ConfluenceApi,
@@ -102,6 +148,19 @@ export class DocumentPublishingService {
       const labelsMatch = labelFilters.every((label) => currentLabels.has(label));
       return titleMatches && labelsMatch;
     });
+  }
+
+  async searchArchitectAdrPages(input?: {
+    spaceId?: string;
+  }): Promise<ConfluencePage[]> {
+    const pages = await this.searchPages({
+      ...(input?.spaceId ? { spaceId: input.spaceId } : {}),
+      labels: ["adr"]
+    });
+
+    return Promise.all(
+      pages.map((page) => this.confluenceApi.getPage(page.id, true))
+    );
   }
 
   getPage(pageId: string): Promise<ConfluencePage> {
@@ -227,6 +286,149 @@ export class DocumentPublishingService {
         ...(plan.spaceId ? { spaceId: plan.spaceId } : {}),
         ...(plan.parentId ? { parentId: plan.parentId } : {}),
         message: `Updated by repo-first ${plan.docType} publishing flow.`
+      });
+      await this.syncPageLabels(updatedPage.id, updatedPage.labels, plan.labels);
+
+      const refreshedPage = await this.confluenceApi.getPage(updatedPage.id, false);
+
+      return {
+        ...plan,
+        action: "updated",
+        page: {
+          id: refreshedPage.id,
+          title: refreshedPage.title,
+          ...(refreshedPage.version?.number
+            ? { version: refreshedPage.version.number }
+            : {}),
+          ...(refreshedPage.webUrl ? { webUrl: refreshedPage.webUrl } : {})
+        }
+      };
+    }
+
+    const createdPage = await this.confluenceApi.createPage({
+      spaceId: plan.spaceId,
+      title: plan.title,
+      bodyStorage: plan.bodyStoragePreview,
+      ...(plan.parentId ? { parentId: plan.parentId } : {})
+    });
+    await this.syncPageLabels(createdPage.id, createdPage.labels, plan.labels);
+    const refreshedPage = await this.confluenceApi.getPage(createdPage.id, false);
+
+    return {
+      ...plan,
+      action: "created",
+      page: {
+        id: refreshedPage.id,
+        title: refreshedPage.title,
+        ...(refreshedPage.version?.number
+          ? { version: refreshedPage.version.number }
+          : {}),
+        ...(refreshedPage.webUrl ? { webUrl: refreshedPage.webUrl } : {})
+      }
+    };
+  }
+
+  async planArchitectAdrPage(input: ArchitectDecisionRecordInput & {
+    sourceIssueKey?: string;
+    spaceId?: string;
+    parentId?: string;
+  }): Promise<ArchitectAdrPagePlan> {
+    const issueContext = await this.loadIssueContext(input.sourceIssueKey);
+    const resolvedSpaceId =
+      input.spaceId ?? this.config.confluenceDefaultSpaceId;
+
+    if (!resolvedSpaceId) {
+      throw new Error(
+        "Missing Confluence space target. Provide spaceId or configure CONFLUENCE_DEFAULT_SPACE_ID."
+      );
+    }
+
+    const recordPage = buildArchitectDecisionRecordPage({
+      ...input,
+      ...(input.projectKey
+        ? {}
+        : issueContext.projectKey
+          ? { projectKey: issueContext.projectKey }
+          : {})
+    });
+    const [matchingPages, existingAdrPages] = await Promise.all([
+      this.findExactIdentityMatches({
+        spaceId: resolvedSpaceId,
+        title: recordPage.title,
+        ...(input.parentId ? { parentId: input.parentId } : {})
+      }),
+      this.searchArchitectAdrPages({ spaceId: resolvedSpaceId })
+    ]);
+    const safetyPlan = buildArchitectDecisionSafetyPlan({
+      decision: input,
+      existingAdrPages: existingAdrPages.map((page) => ({
+        id: page.id,
+        title: page.title,
+        labels: page.labels,
+        ...(page.bodyStorage ? { bodyStorage: page.bodyStorage } : {}),
+        ...(page.webUrl ? { webUrl: page.webUrl } : {})
+      }))
+    });
+
+    return {
+      title: recordPage.title,
+      summary: recordPage.summary,
+      labels: recordPage.labels,
+      spaceId: resolvedSpaceId,
+      ...(input.parentId ? { parentId: input.parentId } : {}),
+      taxonomyHints: [
+        "Architecture",
+        "Architecture / ADR Index",
+        "Architecture / ADRs"
+      ],
+      bodyStoragePreview: recordPage.bodyStorage,
+      pageIdentity: {
+        spaceId: resolvedSpaceId,
+        title: recordPage.title,
+        ...(input.parentId ? { parentId: input.parentId } : {})
+      },
+      candidatePages: matchingPages.map((page) => ({
+        id: page.id,
+        title: page.title,
+        ...(page.parentId ? { parentId: page.parentId } : {}),
+        ...(page.version?.number ? { version: page.version.number } : {}),
+        ...(page.webUrl ? { webUrl: page.webUrl } : {})
+      })),
+      upsertDecision: decideUpsertAction(matchingPages),
+      safetyPlan
+    };
+  }
+
+  async ensureArchitectAdrPage(input: ArchitectDecisionRecordInput & {
+    sourceIssueKey?: string;
+    spaceId?: string;
+    parentId?: string;
+  }): Promise<EnsureArchitectAdrPageResult> {
+    const plan = await this.planArchitectAdrPage(input);
+
+    if (plan.upsertDecision.action === "manual_step_required") {
+      return {
+        ...plan,
+        action: "manual_step_required"
+      };
+    }
+
+    if (plan.upsertDecision.action === "update") {
+      const pageId = plan.upsertDecision.targetPageId;
+
+      if (!pageId) {
+        throw new Error("Update decision did not include a target page id.");
+      }
+
+      const currentPage = await this.confluenceApi.getPage(pageId, true);
+      const updatedPage = await this.confluenceApi.updatePage({
+        pageId,
+        title: plan.title,
+        bodyStorage: plan.bodyStoragePreview,
+        version: (currentPage.version?.number ?? 0) + 1,
+        ...(plan.spaceId ? { spaceId: plan.spaceId } : {}),
+        ...(plan.parentId ? { parentId: plan.parentId } : {}),
+        message: "Updated by Architect ADR publishing flow."
       });
       await this.syncPageLabels(updatedPage.id, updatedPage.labels, plan.labels);
 

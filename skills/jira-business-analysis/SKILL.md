@@ -1,6 +1,6 @@
 ---
 name: jira-business-analysis
-description: Use when Codex needs to perform business-analysis style discovery, requirement shaping, stakeholder-aware scoping, process analysis, gap analysis, backlog handoff preparation, or Confluence-friendly analysis outputs in a Jira and Confluence workflow. This skill turns vague asks, stakeholder needs, and process-change requests into structured Jira-ready scope, derived acceptance direction, candidate acceptance criteria, decision logs, and bounded discovery outputs without letting questioning sprawl endlessly.
+description: Use when Codex needs to perform business-analysis style discovery, requirement shaping, stakeholder-aware scoping, process analysis, gap analysis, backlog handoff preparation, or Confluence-friendly analysis outputs in a Jira and Confluence workflow. This skill turns vague asks, stakeholder needs, and process-change requests into structured Jira-ready scope, derived acceptance direction, candidate acceptance criteria, decision logs, and bounded discovery outputs without letting questioning sprawl endlessly. When BA discovery exposes architecture decision needs, ADR scope, hard constraints, medium refactor, cross-boundary change, or bounded spike risk, hand off architecture judgment to jira-architect.
 ---
 
 # Jira Business Analysis
@@ -24,6 +24,9 @@ This skill is not for:
 - workflow administration
 - implementation planning after the backlog is already ready
 - asking endless exploratory questions without converging
+- final architecture decision authority
+
+Use `$jira-architect` when discovery output needs architecture decisions, ADRs, hard constraints, proportional blocking, or bounded spike choices. BA may shape questions and context; Architect owns the decision.
 
 ## Operating Model
 
@@ -114,7 +117,7 @@ Stakeholder handling must begin with stakeholder presence, not role decompositio
 
 Ask this first when stakeholder structure is still unknown:
 
-`Van rajtad kivul mas erdemi resztvevo is a projektben vagy a dontesben, vagy ezt lenyegeben egy ember viszi?`
+`Besides you, is there another meaningful participant in the project or decision, or is this essentially owned by one person?`
 
 Ask this at most once per discovery thread.
 

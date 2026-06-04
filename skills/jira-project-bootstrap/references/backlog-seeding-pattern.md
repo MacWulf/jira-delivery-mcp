@@ -5,12 +5,13 @@ Use this pattern to seed a new Jira project from a brief.
 ## Recommended Order
 
 1. Create the project shell.
-2. Define the top-level outcome as an epic.
-3. Split the outcome into a small number of stories.
-4. Add implementation tasks only where needed.
-5. Add bugs only when there is a known defect or migration risk.
-6. Add dependencies explicitly.
-7. For each behavior-changing delivery item, create or require a linked pre-development test plan issue through `jira-quality-control`.
+2. Use `jira-architect` to decide the minimum kickoff architecture foundation, ADR need, hard constraints, and affected-work blocking rules.
+3. Define the top-level outcome as an epic.
+4. Split the outcome into a small number of stories.
+5. Add implementation tasks only where needed.
+6. Add bugs only when there is a known defect or migration risk.
+7. Add dependencies explicitly.
+8. For each behavior-changing delivery item, create or require a linked pre-development test plan issue through `jira-quality-control`.
 
 ## Seeding Rules
 
@@ -21,6 +22,7 @@ Use this pattern to seed a new Jira project from a brief.
 - Do not create every possible task on day one.
 - Make each item startable, not merely descriptive.
 - Use parent links instead of flattening everything into one list.
+- Carry Architect decisions into affected issues as ADR links, short summaries, hard constraints, and next-skill routing.
 - Do not use one generic QA issue as a substitute for linked pre-dev test plans unless it explicitly covers and links to every affected delivery issue.
 
 ## Tenant-Aware Notes
@@ -34,5 +36,6 @@ Use this pattern to seed a new Jira project from a brief.
 - Short description of value or work
 - Acceptance criteria or success condition
 - Linked pre-dev test plan for every behavior-changing delivery issue
+- Architect decision or explicit non-applicability note for kickoff architecture and architecture-impacting starter work
 - Dependencies when relevant
 - Ready for execution without guesswork

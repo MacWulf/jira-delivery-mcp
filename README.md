@@ -4,7 +4,7 @@
 
 It is built for teams that want AI-assisted Jira execution without losing deterministic tooling, workflow awareness, or auditability.
 
-Current release: `v0.2.0`
+Current release: `v0.3.0`
 
 ## Who It Is For
 
@@ -33,8 +33,10 @@ Use this project if you want an assistant to help with Jira work such as:
 - store execution metadata in issue descriptions and resolve it during execution
 - validate dependency state before picking or starting work
 
-## Highlights In v0.2.0
+## Highlights In v0.3.0
 
+- Architect skill for architecture decisions, ADR guidance, hard constraints, proportional blocking, and downstream Jira skill routing
+- public-release-ready Architect documentation and bundled references
 - workflow-aware issue state reconciliation, including helper fallback for safe drift repair
 - readiness and quality-governance policy layers for disciplined delivery movement
 - change-control planning surface for classifying incoming scope change before mutation
@@ -63,6 +65,7 @@ Typical flow:
 | Workflow mutation | Supported with caution | Validate before rollout; treat as high-impact admin work |
 | Codex skills | Optional integration | Useful, but not required to run the MCP server |
 | Windows DPAPI secrets | Supported | Recommended Windows local-secret option |
+| npm publication | Disabled | Root package is private to prevent accidental registry publication; GitHub release is supported |
 
 ## Installation
 
@@ -127,6 +130,7 @@ npm run dev
 The repository also includes an optional Codex skill package under [`skills/`](./skills):
 
 - `jira-core`
+- `jira-architect`
 - `jira-business-analysis`
 - `jira-project-bootstrap`
 - `jira-intake-refinement`
@@ -179,6 +183,13 @@ Start here:
 - [Project bootstrap model](./docs/project-bootstrap-model.md)
 - [Dependency control](./docs/dependency-control.md)
 - [Secret storage](./docs/secret-storage.md)
+- [Architect role charter](./docs/architect-role-charter.md)
+- [Architect activation triggers](./docs/architect-activation-triggers.md)
+- [Architect ADR template spec](./docs/architect-adr-template-spec.md)
+- [Architect Jira and Confluence sync](./docs/architect-jira-confluence-sync-spec.md)
+- [Architect best practices](./docs/architect-best-practices-discovery.md)
+- [Architect release readiness](./docs/architect-discovery-readiness.md)
+- [Release v0.3.0](./docs/release-v0.3.0.md)
 
 Additional references:
 - [Project brief template](./fixtures/project-brief-template.md)

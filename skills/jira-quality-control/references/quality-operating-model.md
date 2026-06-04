@@ -11,6 +11,7 @@ Use this skill package as the dedicated quality layer for Jira work.
 - create bugs when validation fails
 - plan retest loops after fixes or reopen events
 - keep tenant-aware fallbacks explicit
+- consume architecture constraints, ADR status, affected-work scope, and bounded spike evidence from `jira-architect` when validation depends on architecture decisions
 
 ## Core Principle
 
@@ -19,6 +20,7 @@ For new development or repair work, quality starts before implementation. The as
 Do not hide validation intent inside comments if a structured issue or field can carry the information safely.
 If implementation or defect-fixing is actively happening, the related issue should also leave `To Do` and receive a concise progress trace.
 If implementation or defect work is already active, do not leave the relevant Jira issue in `To Do` while creating validation, bug, or retest artifacts.
+If validation depends on architecture constraints or ADR status, use `jira-architect` before finalizing the quality plan.
 When the workflow supports `User Testing`, distinguish assistant-owned technical `QA` from the later human-owned acceptance gate.
 If the workflow does not separate `User Testing`, do not stop at `QA` by default when the remaining validation is still assistant-executable.
 
@@ -38,6 +40,7 @@ Include:
 - edge cases
 - negative or failure-path cases
 - acceptance criteria or expected behavior covered
+- architecture constraints, quality attributes, ADR link, or bounded spike evidence when applicable
 - expected test files, suites, or validation surfaces when known
 
 If a current linked test plan already exists and still covers the intended change, update it instead of creating a duplicate. If the old plan is stale or incomplete, revise it and keep the trace clear.

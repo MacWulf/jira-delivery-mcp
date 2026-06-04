@@ -88,6 +88,10 @@ Use these meanings consistently:
 - `User Testing`: human-owned manual or business validation
 - `Done`: only after the final required gate is cleared
 
+Do not park work in `In Review`, `QA`, or `User Testing` when all remaining checks are assistant-verifiable. In that case, complete the available workflow path to `Done` with a concise evidence comment.
+
+Use `User Testing` only when a real user-owned decision, manual inspection, business acceptance, or explicit user-requested review remains.
+
 Human-gate precedence should be:
 
 1. execution metadata

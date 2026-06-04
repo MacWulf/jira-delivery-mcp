@@ -34,8 +34,10 @@ import { registerAnalyzeDocStalenessTool } from "./analyze-doc-staleness.js";
 import { registerDiscoverIssueTypeCapabilitiesTool } from "./discover-issue-type-capabilities.js";
 import { registerDiscoverProjectWorkflowTool } from "./discover-project-workflow.js";
 import { registerEnsureCustomFieldAvailableTool } from "./ensure-custom-field-available.js";
+import { registerEnsureArchitectAdrPageTool } from "./ensure-architect-adr-page.js";
 import { registerEnsureIssueTypeAvailableTool } from "./ensure-issue-type-available.js";
 import { registerEnsureProjectDocPageTool } from "./ensure-project-doc-page.js";
+import { registerEvaluateArchitectActivationTool } from "./evaluate-architect-activation.js";
 import { registerEvaluateIssueReadinessTool } from "./evaluate-issue-readiness.js";
 import { registerEvaluateWritePolicyTool } from "./evaluate-write-policy.js";
 import { registerGenerateValidationWorkTool } from "./generate-validation-work.js";
@@ -54,6 +56,8 @@ import { registerListWorkflowSchemesTool } from "./list-workflow-schemes.js";
 import { registerMarkIssueBlockedTool } from "./mark-issue-blocked.js";
 import { registerPickNextIssueTool } from "./pick-next-issue.js";
 import { registerPlanFieldPolicyTool } from "./plan-field-policy.js";
+import { registerPlanArchitectAdrPageTool } from "./plan-architect-adr-page.js";
+import { registerPlanArchitectDecisionSafetyTool } from "./plan-architect-decision-safety.js";
 import { registerPlanBugTriageTool } from "./plan-bug-triage.js";
 import { registerPlanChangeDecisionLogTool } from "./plan-change-decision-log.js";
 import { registerPlanChangeExecutionTool } from "./plan-change-execution.js";
@@ -147,6 +151,7 @@ export function registerTools(
   registerListWorkflowSchemesTool(server, jiraApi);
   registerDiscoverProjectWorkflowTool(server, workflowDiscoveryService);
   registerEvaluateIssueReadinessTool(server, readinessPolicyService);
+  registerEvaluateArchitectActivationTool(server, jiraApi);
   registerPreviewStandardProjectWorkflowTool(server, workflowAdminService);
   registerApplyStandardProjectWorkflowTool(
     server,
@@ -220,6 +225,8 @@ export function registerTools(
   );
   registerPlanRetestLoopTool(server, qualityControlService);
   registerPlanProjectDocPageTool(server, documentPublishingService);
+  registerPlanArchitectAdrPageTool(server, documentPublishingService);
+  registerPlanArchitectDecisionSafetyTool(server, documentPublishingService);
   registerPlanDocGovernanceTool(server, documentGovernanceService);
   registerPlanDocMetadataPolicyTool(server, documentGovernanceService);
   registerPlanDocIndexPagesTool(server, documentGovernanceService);
@@ -232,4 +239,9 @@ export function registerTools(
   registerCreateDocPageTool(server, confluenceApi, config);
   registerUpdateDocPageTool(server, documentPublishingService, config);
   registerEnsureProjectDocPageTool(server, documentPublishingService, config);
+  registerEnsureArchitectAdrPageTool(
+    server,
+    documentPublishingService,
+    config
+  );
 }

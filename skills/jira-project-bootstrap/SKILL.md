@@ -1,6 +1,6 @@
 ---
 name: jira-project-bootstrap
-description: Use when the task is to turn a project brief, repo, or kickoff request into a Jira project structure, starter backlog, and initial delivery plan. When the seeded backlog contains implementation, bugfix, refactor, integration, UI, backend, frontend, mobile, API, transport, auth, automation, or other behavior-changing delivery issues, immediately route to jira-quality-control before ending the turn so linked pre-development test plan issues are created or required.
+description: Use when the task is to turn a project brief, repo, or kickoff request into a Jira project structure, starter backlog, and initial delivery plan. Project kickoff must route to jira-architect for architecture foundation decisions before implementation starts. When the seeded backlog contains implementation, bugfix, refactor, integration, UI, backend, frontend, mobile, API, transport, auth, automation, or other behavior-changing delivery issues, immediately route to jira-quality-control before ending the turn so linked pre-development test plan issues are created or required.
 ---
 
 # Jira Project Bootstrap
@@ -24,6 +24,8 @@ This skill is for project kickoff. Once the backlog exists, route refinement wor
 
 1. Read the brief and identify the project intent.
    Extract the business goal, target user or stakeholder, major constraints, and likely first release shape.
+2. Activate architecture decision support.
+   Use `$jira-architect` for project kickoff architecture decisions, ADR need, hard constraints, initial service/module boundaries, data-flow choices, integration choices, and implementation blocking rules.
 2. Confirm the Jira operating mode.
    Determine whether the project should be `team-managed` or `company-managed`, and whether it should start in `kanban` or `scrum`.
    Keep this flexible. Do not overfit the bootstrap to one tenant model if the target project can only be discovered at execution time.
@@ -37,6 +39,7 @@ This skill is for project kickoff. Once the backlog exists, route refinement wor
    Choose the smallest useful slice that proves the project can move from planning into real delivery.
 7. Create or require quality companions.
    For each seeded implementation, bugfix, refactor, integration, UI, backend, frontend, mobile, API, transport, auth, automation, or other behavior-changing delivery issue, route to `$jira-quality-control` and create or require a linked pre-development test plan issue before ending the turn.
+   If Architect created hard constraints or ADR follow-up work, include those constraints in the quality companion plan.
 8. Hand off to operational skills.
    Once the project is seeded, switch to intake or execution skills instead of continuing to bootstrap indefinitely.
 
@@ -57,6 +60,7 @@ A single general QA or stability issue is not enough unless it explicitly covers
 - Add dependencies when sequencing matters; do not bury them in prose.
 - Make the first issues executable, not merely descriptive.
 - Do not finish bootstrap with behavior-changing delivery issues that lack linked pre-dev test plan coverage or an explicit note that an existing linked test plan is current and sufficient.
+- Do not start implementation from a kickoff until `$jira-architect` has decided the minimum architecture foundation or created bounded spike work.
 - Do not try to model the entire future roadmap on day one.
 - If the target project cannot support a requested issue type, workflow step, or admin action through the available AI tools, note the gap and surface the required manual Jira step.
 

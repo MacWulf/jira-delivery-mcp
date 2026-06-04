@@ -19,6 +19,7 @@ Use the hierarchy only when it adds clarity:
 - If the item describes broken behavior, prefer `Bug`.
 - If the item is a large container for related work, prefer `Epic`.
 - If the item cannot stand alone, make it a `Sub-task` under a valid parent.
+- If the item is a medium-or-larger refactor, cross-boundary change, ADR need, hard constraint, contradiction, or bounded spike, add `jira-architect` as the architecture decision companion before execution.
 
 ## Required Parent Logic
 
@@ -38,6 +39,7 @@ Check for:
 - short but specific description
 - acceptance criteria or success condition
 - known dependencies
+- architecture decision status, ADR link, or explicit non-applicability note when architecture impact is plausible
 - owner or intended assignee when relevant
 - reproducible steps for bugs
 
