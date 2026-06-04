@@ -129,15 +129,17 @@ npm run dev
 
 The repository also includes an optional Codex skill package under [`skills/`](./skills):
 
-- `jira-core`
-- `jira-architect`
-- `jira-business-analysis`
-- `jira-project-bootstrap`
-- `jira-intake-refinement`
-- `jira-quality-control`
-- `jira-documentation-publishing`
-- `jira-execution-loop`
-- `jira-workflow-admin`
+| Skill | What it does |
+| --- | --- |
+| `jira-core` | Core operating model: project discovery, tenant-aware Jira rules, issue classification, and safe tool usage. |
+| `jira-architect` | Architecture authority: ADRs, hard constraints, proportional blocking, system-boundary decisions, and routing to other skills. |
+| `jira-business-analysis` | Discovery and requirement shaping: goals, stakeholders, scope, open questions, and decision-ready analysis. |
+| `jira-project-bootstrap` | Project startup: creates initial Jira structure, epics, baseline documentation, and delivery flow. |
+| `jira-intake-refinement` | Backlog cleanup: splits, clarifies, prioritizes, and prepares issues for execution. |
+| `jira-quality-control` | Quality gate: plans validation, checks acceptance evidence, and prevents unnecessary user review. |
+| `jira-documentation-publishing` | Documentation bridge: keeps repo docs and Confluence pages aligned. |
+| `jira-execution-loop` | Delivery loop: selects next logical issue, moves work through statuses, and records evidence. |
+| `jira-workflow-admin` | Workflow management: designs or adjusts Jira workflows, statuses, and admin-facing configuration. |
 
 These skills are designed to stay tenant-aware:
 
