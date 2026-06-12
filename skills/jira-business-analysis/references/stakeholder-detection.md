@@ -6,7 +6,7 @@ Do not start with a full stakeholder matrix.
 
 Ask only whether there is more than one meaningful participant.
 
-`Van rajtad kivul mas erdemi resztvevo is a projektben vagy a dontesben, vagy ezt lenyegeben egy ember viszi?`
+`Besides you, is there another meaningful participant in the project or decision, or is this essentially owned by one person?`
 
 Ask this at most once per discovery thread.
 

@@ -11,3 +11,7 @@ Use for concise status pages that summarize current state, changes, and next ste
 ## `implementation-note`
 
 Use for implementation-facing publication tied to a Jira issue and one or more repo artifacts.
+
+## Architecture Decision Content
+
+ADR and architecture decision pages are decided by `jira-architect` first. This documentation skill owns Confluence publishing mechanics, page placement, and human-readable structure after Architect defines the decision content contract.

@@ -15,7 +15,8 @@ export const WRITE_OPERATIONS = [
   "add_worklog",
   "create_doc_page",
   "update_doc_page",
-  "ensure_project_doc_page"
+  "ensure_project_doc_page",
+  "ensure_architect_adr_page"
 ] as const;
 
 export type WriteOperation =

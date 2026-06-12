@@ -64,7 +64,7 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core", "jira-project-bootstrap"],
-          optionalSkills: ["jira-intake-refinement"],
+          optionalSkills: ["jira-intake-refinement", "jira-architect"],
           executionMode: "implement"
         }
       },
@@ -83,7 +83,7 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
           "- bootstrap output is auditable"
         ].join("\n"),
         executionMetadata: {
-          requiredSkills: ["jira-core", "jira-project-bootstrap"],
+          requiredSkills: ["jira-core", "jira-project-bootstrap", "jira-architect"],
           optionalSkills: ["jira-workflow-admin"],
           executionMode: "implement"
         }
@@ -103,7 +103,7 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
           "- the initial seed does not skip critical setup steps"
         ].join("\n"),
         executionMetadata: {
-          requiredSkills: ["jira-core", "jira-project-bootstrap"],
+          requiredSkills: ["jira-core", "jira-project-bootstrap", "jira-architect"],
           executionMode: "implement"
         }
       },
@@ -329,7 +329,7 @@ export function buildCodexJiraAssistantKickoffTemplate(): KickoffTemplate {
         ].join("\n"),
         executionMetadata: {
           requiredSkills: ["jira-core"],
-          optionalSkills: ["jira-project-bootstrap"],
+          optionalSkills: ["jira-project-bootstrap", "jira-architect"],
           executionMode: "implement"
         }
       }

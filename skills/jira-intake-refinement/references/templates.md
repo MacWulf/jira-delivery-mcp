@@ -29,6 +29,9 @@ Summary:
 Description:
 `This task covers [implementation detail], including [constraints or dependencies].`
 
+Architecture:
+`Architect decision: [ADR link, hard constraints, or not applicable].`
+
 ## Bug Template
 
 Summary:
@@ -48,4 +51,5 @@ Description:
 - Split mixed tickets into separate issues.
 - Add parent links and dependencies.
 - Keep the item small enough to start work immediately.
+- For medium-or-larger refactors, cross-boundary changes, ADR needs, hard constraints, contradictions, or bounded spikes, add `jira-architect` as expected companion before execution.
 - For any item likely to require code changes, add `jira-quality-control` as the expected follow-up before implementation so a pre-dev test plan issue guides the coding work.

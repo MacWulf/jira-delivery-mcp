@@ -105,6 +105,8 @@ $configPath = Join-Path $resolvedCodexHome "config.toml"
 $distEntrypoint = Join-Path $resolvedRepoRoot "services\jira-mcp-server\dist\index.js"
 $skillNames = @(
   "jira-core",
+  "jira-architect",
+  "jira-business-analysis",
   "jira-project-bootstrap",
   "jira-intake-refinement",
   "jira-quality-control",

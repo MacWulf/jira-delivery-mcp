@@ -1,6 +1,6 @@
 ---
 name: jira-core
-description: Use when the task is about setting up, classifying, or operating Jira work in a tenant-aware way. This skill routes the work to the right companion Jira skill and defines the baseline operating model. For any Jira-scoped development, implementation, bugfix, refactor, integration, automation, API, UI, backend, frontend, or behavior-changing work, route jira-quality-control as a companion before coding so test planning guides the implementation.
+description: Use when the task is about setting up, classifying, or operating Jira work in a tenant-aware way. This skill routes the work to the right companion Jira skill and defines the baseline operating model. For any Jira-scoped development, implementation, bugfix, refactor, integration, automation, API, UI, backend, frontend, or behavior-changing work, route jira-quality-control as a companion before coding so test planning guides the implementation. For architecture-impacting kickoff, medium refactor, ADR, hard constraint, contradiction, or bounded spike work, route jira-architect as the decision companion.
 ---
 
 # Jira Core
@@ -30,6 +30,8 @@ Do not stop at generic advice. Route the task into the most relevant companion s
 
 1. Detect the project mode first.
    Determine whether the target project is team-managed or company-managed. Do not assume company-managed conventions apply everywhere.
+2. Identify architecture decision needs.
+   If the work involves project kickoff architecture, medium-or-larger refactor, cross-module or data-flow change, ADR creation/update/conflict, hard technical constraints, proportional blocking, or bounded spike decisions, use `$jira-architect`.
 2. Identify the job to be done.
    If the work is about business-analysis style discovery, stakeholder-aware scoping, as-is/to-be analysis, requirement shaping, or bounded elicitation before backlog handoff, use `$jira-business-analysis`.
 3. Identify the job to be done.
@@ -61,6 +63,7 @@ Do not stop at generic advice. Route the task into the most relevant companion s
    - review stale, orphaned, or low-trust pages
    Any Jira-scoped implementation request that is already in active delivery should also use `$jira-execution-loop`, and prefer `sync_issue_progress`, so the issue leaves `To Do` and gets a progress trace before the assistant behaves as if work is underway.
    Any Jira-scoped implementation request should also use `$jira-quality-control` before code changes start, so a linked pre-dev test plan issue guides happy-path, edge-case, and negative-path coverage.
+   Architecture-impacting implementation should use `$jira-architect` before coding decisions are treated as settled. After Architect decides, route execution, QC, docs, intake, and workflow tasks back to their owning skills.
    A new project bootstrap often needs intake, quality, and execution skills in sequence: first admin design, then seeding, then operational policy.
    A new project bootstrap must not end with behavior-changing delivery issues that lack linked pre-dev test plan coverage. A single general QA or stability issue is not enough unless it explicitly covers and links to every affected delivery issue.
 
@@ -82,6 +85,8 @@ Do not stop at generic advice. Route the task into the most relevant companion s
 - Human-gate precedence is: execution metadata first, labels second, workflow default last. When no issue-specific signal exists, use `User Testing` as the default human gate in workflows that support it, otherwise fall back to `QA`.
 - Review is not human-only by default. `QA` is not human-only by default once `User Testing` exists.
 - Do not stop at `In Review` or `QA` just because the status name sounds human. Stop there only when the remaining gate actually requires a person, or when Jira exposes no safe assistant-executable move beyond that point.
+- Do not leave assistant-verifiable work in `In Review`, `QA`, or `User Testing`. If tests, docs, review, Jira sync, and Confluence sync are complete and no real user-owned decision remains, continue through the real workflow transitions to `Done` with an evidence comment.
+- Use `User Testing` only when a real user-owned decision, manual inspection, business acceptance, or explicitly requested user review remains.
 - In legacy workflows without `User Testing`, treat `QA` as a fallback handoff status, but continue through it when the required validation is still assistant-executable and Jira exposes a real next transition.
 - Do not describe work as ready to close unless the content is complete, evidence is sufficient, prior gates are satisfied, dependencies are resolved, and a real `Done` or `Accepted` transition is currently available from the issue's status.
 - A bug raised from violated acceptance, failed validation, or readiness mismatch must link directly to each affected issue. Parent epic or capability links are supporting context, never a substitute for direct traceability.
@@ -111,6 +116,8 @@ When bootstrapping a project from scratch:
 
 - `$jira-project-bootstrap`
   Use for creating the first Jira structure from a brief, repo, or kickoff context.
+- `$jira-architect`
+  Use for architecture decisions, ADR lifecycle, hard constraints, proportional blocking, and downstream skill routing when kickoff, refactor, boundary, contradiction, or spike triggers appear.
 - `$jira-business-analysis`
   Use for bounded discovery, stakeholder-aware requirement shaping, as-is/to-be analysis, and Jira-ready BA handoff.
 - `$jira-intake-refinement`

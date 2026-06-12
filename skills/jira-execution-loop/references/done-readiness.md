@@ -13,6 +13,7 @@ Use this checklist before closing an issue.
 - The requested work is complete.
 - Acceptance criteria are met or explicitly waived.
 - Any required documentation or notes are added.
+- Any required Architect decision, ADR link, hard constraints, affected-work summary, or bounded spike evidence is complete.
 - Relevant comments, links, or handoff notes are in place.
 - No known blocker remains open on the issue.
 - A real `Done` or `Accepted` transition exists from the current workflow state.
@@ -29,6 +30,7 @@ Use this checklist before closing an issue.
 
 - The work is only partially complete.
 - The result depends on another unresolved issue.
+- A mandatory architecture gate, ADR conflict, or bounded spike remains unresolved for affected work.
 - The issue lacks evidence that the work was verified.
 - A review, approval, or external dependency is still pending.
 - The issue is only ready for the next gate such as `In Review`, assistant-owned `QA`, or `User Testing`.

@@ -1,6 +1,6 @@
 ---
 name: jira-workflow-admin
-description: Use when the task is to design or change Jira workflows, statuses, schemes, screens, or field policy. This skill governs admin-safe workflow work and avoids blind edits on live projects.
+description: Use when the task is to design or change Jira workflows, statuses, schemes, screens, or field policy. This skill governs admin-safe workflow work and avoids blind edits on live projects. When workflow or field changes are driven by architecture decision gates, ADR metadata, proportional blocking, or hard constraint policy, use jira-architect for the architecture decision before admin design.
 ---
 
 # Jira Workflow Admin
@@ -29,6 +29,7 @@ Do not use this skill for ordinary issue movement. That belongs in `$jira-execut
    Identify whether the change is isolated to one project or shared across multiple projects.
 3. Design the target operating model.
    Define each status by business meaning, not by habit. Clarify what can enter and leave each status, but do not assume the same lifecycle fits every project.
+   If the operating model needs architecture gates, ADR metadata, or proportional blocking policy, use `$jira-architect` for the decision and constraints before admin design.
 4. Check tenant compatibility.
    Team-managed and company-managed projects support different governance patterns. Treat this as a routing concern, not as a reason to hardcode a single preferred model into the skill.
 5. Plan migration before editing.

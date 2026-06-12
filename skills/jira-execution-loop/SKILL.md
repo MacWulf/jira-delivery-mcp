@@ -1,6 +1,6 @@
 ---
 name: jira-execution-loop
-description: "Use when the task is to operate Jira during delivery: pick the next issue, start work, track progress, hand off safely, and close work only when ready. When delivery includes implementation, bugfixing, refactoring, integration, automation, API, UI, backend, frontend, or behavior-changing work, use jira-quality-control as a companion before coding so a pre-dev test plan guides the work."
+description: "Use when the task is to operate Jira during delivery: pick the next issue, start work, track progress, hand off safely, and close work only when ready. When delivery includes implementation, bugfixing, refactoring, integration, automation, API, UI, backend, frontend, or behavior-changing work, use jira-quality-control as a companion before coding so a pre-dev test plan guides the work. When active work hits architecture decision, ADR, hard constraint, contradiction, medium refactor, affected-work blocking, or bounded spike triggers, use jira-architect before continuing implementation."
 ---
 
 # Jira Execution Loop
@@ -72,6 +72,7 @@ Use workflow-state reconciliation when Jira is out of sync with reality and the 
 - If acceptance criteria changed, record that change before closing the issue.
 - If a required Jira action cannot be completed through the available tools, stop and tell the user the exact manual step instead of inventing automation.
 - If a human gate is reached, move the issue there when ready, attach the best available evidence, leave a concise handoff note, and stop there.
+- If an architecture gate is reached, use `$jira-architect` to decide, publish ADR if needed, sync affected Jira issues, and block only affected work before continuing execution.
 - Do not describe an issue as ready to close unless Jira currently exposes a real `Done` or `Accepted` transition from the issue's current state.
 - Use reconciliation only to align state through real Jira transitions. Do not silently weaken start, handoff, or close readiness rules for normal delivery work.
 
@@ -79,6 +80,7 @@ Use workflow-state reconciliation when Jira is out of sync with reality and the 
 
 - If the user asks to implement or continue a Jira-scoped issue, use `$jira-execution-loop` to activate the issue before editing code that belongs to that issue.
 - If the user asks to implement, fix, refactor, integrate, automate, or otherwise change behavior for a Jira-scoped issue, use `$jira-quality-control` before code edits to create or update the linked pre-dev test plan.
+- If that implementation is architecture-impacting, medium-or-larger refactor, ADR-related, or crosses system boundaries, use `$jira-architect` before treating execution as unblocked.
 - If the primary task uses another skill, such as `$jira-quality-control`, combine it with `$jira-execution-loop` whenever code or delivery work is already in flight.
 - If the issue is still in `To Do`, do not treat that as a harmless reporting gap. Either transition it correctly or stop and surface the missing Jira step.
 

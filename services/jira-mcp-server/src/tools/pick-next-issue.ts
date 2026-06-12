@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 import type { AppConfig } from "../config.js";
-import { parseIssueExecutionMetadataFromDescription } from "../domain/issue-execution-metadata.js";
+import { evaluateArchitectActivation } from "../domain/architect-activation.js";
+import { parseIssueStructuredMetadataFromDescription } from "../domain/issue-structured-metadata.js";
 import { toolText } from "../lib/mcp.js";
 import {
   buildIssueSelectionReason,
@@ -98,6 +99,11 @@ export function registerPickNextIssueTool(
         .sort(compareIssuesForExecution);
 
       const nextIssue = issues[0];
+      const nextIssueMetadata = nextIssue
+        ? parseIssueStructuredMetadataFromDescription(
+            (nextIssue.fields as Record<string, unknown> | undefined)?.description
+          )
+        : undefined;
 
       if (!nextIssue?.key) {
         return {
@@ -151,10 +157,22 @@ export function registerPickNextIssueTool(
           })),
           notReadyCandidates: notReadyIssues,
           readinessEvaluation: evaluateIssueReadiness(nextIssue, "start"),
-          executionMetadata: parseIssueExecutionMetadataFromDescription(
-            (nextIssue.fields as Record<string, unknown> | undefined)
-              ?.description
-          ).executionMetadata
+          executionMetadata: nextIssueMetadata?.executionMetadata,
+          architectureMetadata: nextIssueMetadata?.architectureMetadata,
+          architectActivation: evaluateArchitectActivation({
+            ...(nextIssue.fields?.summary
+              ? { summary: nextIssue.fields.summary }
+              : {}),
+            ...(nextIssueMetadata?.descriptionText
+              ? { descriptionText: nextIssueMetadata.descriptionText }
+              : {}),
+            ...(nextIssue.fields?.labels
+              ? { labels: nextIssue.fields.labels }
+              : {}),
+            ...(nextIssueMetadata?.architectureMetadata
+              ? { architectureMetadata: nextIssueMetadata.architectureMetadata }
+              : {})
+          })
         }
       };
     }
