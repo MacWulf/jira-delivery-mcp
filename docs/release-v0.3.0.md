@@ -9,7 +9,7 @@ v0.3.0 prepares Jira Delivery MCP for public GitHub publication and adds the Arc
 - Added `jira-architect` skill for architecture decisions, ADR guidance, hard constraints, bounded spikes, proportional blocking, and downstream Jira skill routing.
 - Added public Architect documentation for role, activation, ADRs, Jira/Confluence sync, best practices, and release readiness.
 - Sanitized public documentation so it does not rely on private Jira or Confluence context.
-- Updated repository metadata for `MacWulf/jira-delivery-mcp-playground`.
+- Updated repository metadata for `MacWulf/jira-delivery-mcp`.
 - Updated package versions to `0.3.0`.
 
 ## Validation

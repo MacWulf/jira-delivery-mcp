@@ -6,11 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MacWulf/jira-delivery-mcp-playground.git"
+    "url": "git+https://github.com/MacWulf/jira-delivery-mcp.git"
   },
-  "homepage": "https://github.com/MacWulf/jira-delivery-mcp-playground#readme",
+  "homepage": "https://github.com/MacWulf/jira-delivery-mcp#readme",
   "bugs": {
-    "url": "https://github.com/MacWulf/jira-delivery-mcp-playground/issues"
+    "url": "https://github.com/MacWulf/jira-delivery-mcp/issues"
   },
   "workspaces": [
     "services/*"
